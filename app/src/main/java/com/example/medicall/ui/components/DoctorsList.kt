@@ -17,7 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.medicall.R // Assurez-vous que vos images sont dans res/drawable
+import com.example.medicall.R
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.ui.tooling.preview.Preview
 
 // Modèle de données pour un médecin
 data class Doctor(
@@ -37,16 +38,66 @@ data class Doctor(
     val imageRes: Int
 )
 
-
 // Liste des médecins
 val doctors = listOf(
-    Doctor("Dr. Pediatrician", "Specialist Cardiologist", "HeartCare Clinic, NY", "(555) 123-4567", 5.0, R.drawable.doctor1),
-    Doctor("Dr. Mistry Brick", "Specialist Dentist", "HeartCare Clinic, NY", "(555) 123-4567", 4.8, R.drawable.doctor2),
-    Doctor("Dr. Ether Wall", "Specialist Cancer", "HeartCare Clinic, NY", "(555) 123-4567", 4.5, R.drawable.doctor3)
+    Doctor("Dr. Pediatrician", "Cardiology", "HeartCare Clinic, NY", "(555) 123-4567", 5.0, R.drawable.doctor1),
+    Doctor("Dr. Mistry Brick", "Dentist", "DentalCare Clinic, NY", "(555) 987-6543", 4.8, R.drawable.doctor2),
+    Doctor("Dr. Ether Wall", "Cancer", "Oncology Center, NY", "(555) 246-1357", 4.5, R.drawable.doctor3)
 )
+
+// Liste des spécialités disponibles
+val specialties = listOf("All", "Cardiology", "Dentist")
 
 @Composable
 fun DoctorsList() {
+    var selectedSpecialty by remember { mutableStateOf("All") }
+
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        // Filtres par spécialité
+        SpecialtyFilter(
+            specialties = specialties,
+            selectedSpecialty = selectedSpecialty,
+            onSpecialtySelected = { selectedSpecialty = it }
+        )
+
+        // Liste filtrée des médecins
+        val filteredDoctors = if (selectedSpecialty == "All") doctors
+        else doctors.filter { it.specialty == selectedSpecialty }
+
+        DoctorsList(filteredDoctors)
+    }
+}
+
+@Composable
+fun SpecialtyFilter(
+    specialties: List<String>,
+    selectedSpecialty: String,
+    onSpecialtySelected: (String) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        specialties.forEach { specialty ->
+            Button(
+                onClick = { onSpecialtySelected(specialty) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (selectedSpecialty == specialty) Color(0xFF1676F3) else Color(0xFFE8F4FF),
+                    contentColor = if (selectedSpecialty == specialty) Color.White else Color(0xFF1676F3)
+
+                ),
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Text(text = specialty, fontSize = 14.sp)
+            }
+        }
+    }
+    Spacer(modifier = Modifier.height(12.dp))
+
+}
+
+@Composable
+fun DoctorsList(doctors: List<Doctor>) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -55,8 +106,11 @@ fun DoctorsList() {
         items(doctors) { doctor ->
             DoctorCard(doctor)
         }
+
     }
+
 }
+
 
 @Composable
 fun DoctorCard(doctor: Doctor) {
@@ -76,7 +130,6 @@ fun DoctorCard(doctor: Doctor) {
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Image du médecin avec une étoile en dessous
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(end = 16.dp)
@@ -86,13 +139,12 @@ fun DoctorCard(doctor: Doctor) {
                     contentDescription = doctor.name,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(64.dp)
+                        .size(55.dp)
                         .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
-                // Évaluation du médecin sous l’image
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Default.Star,
@@ -110,14 +162,12 @@ fun DoctorCard(doctor: Doctor) {
                 }
             }
 
-            // Infos du médecin
             Column(modifier = Modifier.weight(1f)) {
                 Text(doctor.name, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.Black)
                 Text(doctor.specialty, fontSize = 14.sp, color = Color.Gray)
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Adresse soulignée
                 Text(
                     text = doctor.address,
                     fontSize = 12.sp,
@@ -127,7 +177,6 @@ fun DoctorCard(doctor: Doctor) {
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Numéro de téléphone avec icône
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Default.Phone,
@@ -146,7 +195,6 @@ fun DoctorCard(doctor: Doctor) {
                 }
             }
 
-            // Bouton Favoris
             IconButton(onClick = { isFavorite = !isFavorite }) {
                 Icon(
                     imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
@@ -158,7 +206,8 @@ fun DoctorCard(doctor: Doctor) {
     }
 }
 
+@Preview(showBackground = true)
 @Composable
-fun PreviewDoctorsList() {
+fun PreviewDoctorsScreen() {
     DoctorsList()
 }
