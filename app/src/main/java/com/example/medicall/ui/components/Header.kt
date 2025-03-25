@@ -15,12 +15,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.material3.*
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
-
-
+import androidx.compose.ui.text.style.TextAlign
 
 
 @Composable
@@ -74,8 +75,15 @@ fun SearchBar() {
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
-            .background(Color(0xFFF5F5F5), shape = RoundedCornerShape(12.dp)),
-        placeholder = { Text("Search", color = Color.Gray) },
+            .border(1.dp, Color(0xFFBDBDBD), shape = RoundedCornerShape(12.dp)) // Bordure plus douce
+            .background(Color(0xFFF5F5F5), shape = RoundedCornerShape(12.dp)), // Correctio
+        placeholder = {
+            Text(
+                "Search",
+                color = Color.Gray,
+                modifier = Modifier.fillMaxWidth(), // Assurer le centrage
+            )
+        },
         leadingIcon = {
             Icon(imageVector = Icons.Default.Search, contentDescription = "Search Icon", tint = Color.Gray)
         },
@@ -86,9 +94,10 @@ fun SearchBar() {
                 }
             }
         },
-        singleLine = true,
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(8.dp),
         colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent, // Supprime la ligne sous le champ actif
+            unfocusedIndicatorColor = Color.Transparent ,// Supprime la ligne sous le champ inactif
             focusedContainerColor = Color(0xFFF5F5F5),
             unfocusedContainerColor = Color(0xFFF5F5F5),
             disabledContainerColor = Color(0xFFF5F5F5),
