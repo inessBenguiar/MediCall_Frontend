@@ -20,10 +20,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.navigation.NavController
 import com.example.medicall.R
+import com.example.medicall.ui.Navigation.Screens
 
 @Composable
-fun SignupForm() {
+fun SignupForm(navController: NavController) {
+
     var fullName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -34,7 +37,7 @@ fun SignupForm() {
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize().fillMaxHeight()
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -63,10 +66,10 @@ fun SignupForm() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        LabelledTextField(label = "Full Name", value = fullName, onValueChange = { fullName = it }, placeholder = "Enter your full name")
-        LabelledTextField(label = "Email Address", value = email, onValueChange = { email = it }, placeholder = "Enter your email")
-        LabelledTextField(label = "Password", value = password, onValueChange = { password = it }, isPassword = true, isVisible = passwordVisible, onVisibilityChange = { passwordVisible = it }, placeholder = "Enter your password")
-        LabelledTextField(label = "Confirm Password", value = confirmPassword, onValueChange = { confirmPassword = it }, isPassword = true, isVisible = confirmPasswordVisible, onVisibilityChange = { confirmPasswordVisible = it }, placeholder = "Confirm your password")
+        //LabelledTextField(label = "Full Name", value = fullName, onValueChange = { fullName = it }, placeholder = "Enter your full name")
+        //LabelledTextField(label = "Email Address", value = email, onValueChange = { email = it }, placeholder = "Enter your email")
+        //LabelledTextField(label = "Password", value = password, onValueChange = { password = it }, isPassword = true, isVisible = passwordVisible, onVisibilityChange = { passwordVisible = it }, placeholder = "Enter your password")
+        //LabelledTextField(label = "Confirm Password", value = confirmPassword, onValueChange = { confirmPassword = it }, isPassword = true, isVisible = confirmPasswordVisible, onVisibilityChange = { confirmPasswordVisible = it }, placeholder = "Confirm your password")
 
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 8.dp)) {
             Checkbox(checked = termsAccepted, onCheckedChange = { termsAccepted = it })
@@ -75,7 +78,7 @@ fun SignupForm() {
         }
 
         Button(
-            onClick = { /* Inscription */ },
+            onClick = { navController.navigate(Screens.Home.route)},
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF1676F3)),
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier.fillMaxWidth().height(48.dp)
@@ -86,7 +89,7 @@ fun SignupForm() {
         Row(modifier = Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
             Text("Already have an account?", color = Color.Gray)
             Spacer(modifier = Modifier.width(4.dp))
-            Text("Log in", color = Color(0xFF1676F3), modifier = Modifier.clickable { /* Redirection */ })
+            Text("Log in", color = Color(0xFF1676F3), modifier = Modifier.clickable { navController.navigate(Screens.Login.route) })
         }
     }
 }

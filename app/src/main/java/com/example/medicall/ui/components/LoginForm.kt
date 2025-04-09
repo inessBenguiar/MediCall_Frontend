@@ -22,19 +22,21 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.navigation.NavController
 import com.example.medicall.R
+import com.example.medicall.ui.Navigation.Screens
 
-class LoginActivity : ComponentActivity() {
+/*class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             LoginForm()
         }
     }
-}
+}*/
 
 @Composable
-fun LoginForm() {
+fun LoginForm(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -128,7 +130,7 @@ fun LoginForm() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = { /* Connexion */ },
+            onClick = { navController.navigate(Screens.Login.route) },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF1676F3)),
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier.fillMaxWidth()
@@ -141,7 +143,7 @@ fun LoginForm() {
         Row {
             Text("Don’t have an account?", color = Color.Gray)
             Spacer(modifier = Modifier.width(4.dp))
-            Text("Sign Up", color = Color(0xFF1676F3), modifier = Modifier.clickable { /* Redirection */ })
+            Text("Sign Up", color = Color(0xFF1676F3), modifier = Modifier.clickable { navController.navigate(Screens.MainScreen.route) })
         }
     }
 }

@@ -4,13 +4,16 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.app.components.Navbar
 import com.example.medicall.ui.components.Header
 import com.example.medicall.ui.components.DoctorsList
 
+
 @Composable
-fun Home() {
+fun Home(navController: NavController) {
     var selectedItem by remember { mutableStateOf(0) }
 
     Scaffold(
@@ -26,7 +29,7 @@ fun Home() {
                 .padding(innerPadding)
         ) {
             Header(userName = "Bouchra")
-            DoctorsList()
+            DoctorsList(navController)
         }
     }
 }
