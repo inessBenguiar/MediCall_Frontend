@@ -3,22 +3,32 @@ package com.example.medicall.ui.preferences
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import com.example.medicall.UserInfo
 
-class Preferences {
-    @Composable
-    fun saveId(value: String) {
-        val context = LocalContext.current
+
+fun saveId(context: Context, email: String, pseudo: String ) {
+
         val pref = context.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
         with(pref.edit()) {
-            putString("user_id", value)
+            putString("email", email)
+            putString("pwd", pseudo)
             apply()
         }
     }
 
-    @Composable
-    fun readId(): String? {
-        val context = LocalContext.current
+
+    fun readId(context: Context): UserInfo {
         val pref = context.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
-        return pref.getString("user_id", null)
+        val email = pref.getString("email", null)
+        val pwd = pref.getString("pwd", null)
+        return UserInfo(email, pwd)
+    }
+
+fun deleteId(context: Context) {
+    val pref = context.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+    with(pref.edit()) {
+        remove("email")
+        remove("pwd")
+        apply()
     }
 }

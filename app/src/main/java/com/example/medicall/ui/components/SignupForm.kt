@@ -20,9 +20,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.example.medicall.R
 import com.example.medicall.ui.Navigation.Screens
+import com.example.medicall.ui.preferences.saveId
 
 @Composable
 fun SignupForm(navController: NavController) {
@@ -66,8 +68,10 @@ fun SignupForm(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        //LabelledTextField(label = "Full Name", value = fullName, onValueChange = { fullName = it }, placeholder = "Enter your full name")
-        //LabelledTextField(label = "Email Address", value = email, onValueChange = { email = it }, placeholder = "Enter your email")
+        LabelledTextField(label = "Full Name", value = fullName, onValueChange = { fullName = it }, placeholder = "Enter your full name")
+        LabelledTextField(label = "Email Address", value = email, onValueChange = { email = it }, placeholder = "Enter your email")
+
+
         //LabelledTextField(label = "Password", value = password, onValueChange = { password = it }, isPassword = true, isVisible = passwordVisible, onVisibilityChange = { passwordVisible = it }, placeholder = "Enter your password")
         //LabelledTextField(label = "Confirm Password", value = confirmPassword, onValueChange = { confirmPassword = it }, isPassword = true, isVisible = confirmPasswordVisible, onVisibilityChange = { confirmPasswordVisible = it }, placeholder = "Confirm your password")
 
@@ -76,9 +80,11 @@ fun SignupForm(navController: NavController) {
             Text("I agree to the ", color = Color.Gray)
             Text("Terms of Service", color = Color(0xFF1676F3), modifier = Modifier.clickable { /* Action */ })
         }
-
+        val context = LocalContext.current
         Button(
-            onClick = { navController.navigate(Screens.Home.route)},
+            onClick = {
+                navController.navigate(Screens.Home.route)
+                saveId(context,password,email)},
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF1676F3)),
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier.fillMaxWidth().height(48.dp)
@@ -89,7 +95,7 @@ fun SignupForm(navController: NavController) {
         Row(modifier = Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
             Text("Already have an account?", color = Color.Gray)
             Spacer(modifier = Modifier.width(4.dp))
-            Text("Log in", color = Color(0xFF1676F3), modifier = Modifier.clickable { navController.navigate(Screens.Login.route) })
+            Text("Log in", color = Color(0xFF1676F3), modifier = Modifier.clickable { navController.navigate(Screens.MainScreen.route) })
         }
     }
 }
