@@ -22,19 +22,24 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.navigation.NavController
 import com.example.medicall.R
+import com.example.medicall.ui.Navigation.Screens
+import com.example.medicall.ui.preferences.saveId
 
-class LoginActivity : ComponentActivity() {
+/*class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             LoginForm()
         }
     }
-}
+}*/
 
 @Composable
-fun LoginForm() {
+fun LoginForm(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -56,13 +61,13 @@ fun LoginForm() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text("Log in to your Account", fontSize = 20.sp, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+        Text("Log in to your Account", fontSize = 20.sp, fontWeight = FontWeight.Bold)
         Text("Welcome back, please enter your details.", fontSize = 14.sp, color = Color.Gray)
 
         Spacer(modifier = Modifier.height(24.dp))
-
+        val context = LocalContext.current
         Button(
-            onClick = { /* Connexion Google */ },
+            onClick = { saveId(context, password, email ) },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
             shape = RoundedCornerShape(8.dp),
             border = BorderStroke(1.dp, Color.LightGray),
@@ -124,11 +129,13 @@ fun LoginForm() {
             Spacer(modifier = Modifier.weight(1f))
             Text("Forgot Password?", color = Color(0xFF1676F3), modifier = Modifier.clickable { /* Action */ })
         }
-
+        if(rememberMe){
+            saveId(context,email, password)}
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = { /* Connexion */ },
+            onClick = {
+                navController.navigate(Screens.Home.route){popUpTo(0)} },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF1676F3)),
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier.fillMaxWidth()
@@ -141,7 +148,7 @@ fun LoginForm() {
         Row {
             Text("Don’t have an account?", color = Color.Gray)
             Spacer(modifier = Modifier.width(4.dp))
-            Text("Sign Up", color = Color(0xFF1676F3), modifier = Modifier.clickable { /* Redirection */ })
+            Text("Sign Up", color = Color(0xFF1676F3), modifier = Modifier.clickable { navController.navigate(Screens.MainScreen.route) })
         }
     }
 }

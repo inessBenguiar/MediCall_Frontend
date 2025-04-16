@@ -27,6 +27,8 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import com.example.medicall.ui.Navigation.Screens
 
 // Modèle de données pour un médecin
 data class Doctor(
@@ -49,7 +51,7 @@ val doctors = listOf(
 val specialties = listOf("All", "Cardiology", "Dentist")
 
 @Composable
-fun DoctorsList() {
+fun DoctorsList(navController: NavController) {
     var selectedSpecialty by remember { mutableStateOf("All") }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
@@ -64,7 +66,7 @@ fun DoctorsList() {
         val filteredDoctors = if (selectedSpecialty == "All") doctors
         else doctors.filter { it.specialty == selectedSpecialty }
 
-        DoctorsList(filteredDoctors)
+        DoctorsList(filteredDoctors,navController)
     }
 }
 
@@ -97,14 +99,14 @@ fun SpecialtyFilter(
 }
 
 @Composable
-fun DoctorsList(doctors: List<Doctor>) {
+fun DoctorsList(doctors: List<Doctor>,navController: NavController) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(doctors) { doctor ->
-            DoctorCard(doctor)
+            DoctorCard(doctor,navController)
         }
 
     }
@@ -113,10 +115,10 @@ fun DoctorsList(doctors: List<Doctor>) {
 
 
 @Composable
-fun DoctorCard(doctor: Doctor) {
+fun DoctorCard(doctor: Doctor,navController: NavController) {
     var isFavorite by remember { mutableStateOf(false) }
 
-    Card(
+    Card( onClick = {navController.navigate(Screens.DoctorInfo.route)},
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .width(320.dp)
@@ -206,8 +208,8 @@ fun DoctorCard(doctor: Doctor) {
     }
 }
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun PreviewDoctorsScreen() {
     DoctorsList()
-}
+}*/
