@@ -1,4 +1,4 @@
-package com.example.medicall.ui.components
+/*package com.example.medicall.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -145,3 +145,4 @@ fun LoginForm() {
         }
     }
 }
+*/

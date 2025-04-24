@@ -1,18 +1,25 @@
 package com.example.medicall
 
+
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+
+import androidx.activity.enableEdgeToEdge
+import com.example.medicall.ui.theme.MedicallTheme
 import com.example.medicall.ui.screens.Home
-import com.example.medicall.ui.screens.Login
-import com.example.medicall.ui.screens.Register
 class MainActivity : ComponentActivity() {
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+
         setContent {
-            // Home()
-            //Login()
-          Register()
+            MedicallTheme {
+                Home()
+            }
         }
     }
 }
+

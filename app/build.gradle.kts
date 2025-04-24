@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.devtools.ksp")
+
 }
 
 android {
@@ -40,14 +42,24 @@ android {
 }
 
 dependencies {
-    implementation("androidx.compose.material:material-icons-extended:1.5.0")
-    implementation ("androidx.navigation:navigation-compose:2.7.5")
-    implementation ("androidx.compose.material3:material3:1.2.0")
-    implementation ("androidx.compose.ui:ui:1.3.0")
-    implementation ("androidx.compose.material:material:1.3.0")
-    implementation ("androidx.compose.ui:ui-tooling-preview:1.3.0")
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
-    implementation ("androidx.activity:activity-compose:1.4.0")
+    //Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.6.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.6.0")
+    implementation ("com.google.code.gson:gson:2.8.5")
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
+    // navigation
+    implementation ("androidx.navigation:navigation-compose:2.8.3")
+    //MockWebserver
+    androidTestImplementation("com.squareup.okhttp3:mockwebserver:4.9.1")
+
+    val room_version = "2.6.0"
+    implementation ("androidx.room:room-runtime:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")
+    implementation ("androidx.room:room-ktx:$room_version")
+    testImplementation ("androidx.room:room-testing:$room_version")
+    ksp("com.google.dagger:hilt-compiler:2.50")
+    implementation ("androidx.compose.material:material-icons-extended:1.0.5")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
