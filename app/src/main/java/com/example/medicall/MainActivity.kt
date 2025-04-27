@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
+import com.example.medicall.ui.Navigation.Navigation
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
@@ -40,9 +41,8 @@ class MainActivity : ComponentActivity() {
             //Login()
           //Register()
             //DoctorDetail()
-                //Navigation(navController)
+                Navigation(navController)
 
-           UsersList()
         }
     }
 }
