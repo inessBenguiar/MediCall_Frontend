@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.medicall.entity.Doctor
 import com.example.medicall.repository.DoctorRepository
 import com.example.errorMessage
+import com.example.medicall.Navigation.Screens
 import kotlinx.coroutines.launch
 
 class DoctorModel(private val repository: DoctorRepository): ViewModel() {
@@ -36,4 +37,15 @@ class DoctorModel(private val repository: DoctorRepository): ViewModel() {
             }
         }
     }
+    fun navigateToDetail(
+        firstName: String,
+        familyName: String,
+        photoUrl: String,
+        address: String,
+        phone: String,
+        email: String
+    ) {
+
+    }
+
 }

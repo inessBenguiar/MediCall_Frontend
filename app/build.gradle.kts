@@ -3,6 +3,9 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("com.google.devtools.ksp")
+    id("com.google.gms.google-services")
+
+
 
 }
 
@@ -42,6 +45,10 @@ android {
 }
 
 dependencies {
+    implementation ("androidx.navigation:navigation-compose:2.4.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    implementation ("com.google.android.gms:play-services-auth:20.5.0")
+
     //Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.6.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.6.0")

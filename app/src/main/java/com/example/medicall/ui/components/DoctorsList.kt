@@ -21,12 +21,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.medicall.viewmodel.DoctorModel
 import com.example.medicall.util.makeToast
 import com.example.errorMessage
+import com.example.medicall.Navigation.Screens
+
 @Composable
-fun DoctorsList(doctorModel: DoctorModel) {
+fun DoctorsList(doctorModel: DoctorModel, navController: NavController) {
     val context = LocalContext.current
     val data = doctorModel.doctors.value
     val loading = doctorModel.loading.value
@@ -76,9 +79,20 @@ fun DoctorsList(doctorModel: DoctorModel) {
                         specialty = doctor.specialty,
                         address = doctor.clinic,
                         phone = doctor.contact,
-                        photoUrl = doctor.photo
+                        photoUrl = doctor.photo,
+                        onClick = {
+                            navController.navigate(
+                                Screens.DoctorDetailScreen.route +
+                                        "?firstName=${doctor.first_name}" +
+                                        "&familyName=${doctor.family_name}" +
+                                        "&photoUrl=${doctor.photo}" +
+                                        "&address=${doctor.clinic}" +
+                                        "&phone=${doctor.contact}"
+                            )
+                        }
                     )
                 }
+
             }
         }
 
@@ -126,12 +140,16 @@ fun DoctorCard(
     specialty: String,
     address: String,
     phone: String,
-    photoUrl: String
+    photoUrl: String,
+    onClick: () -> Unit
+
 ) {
     var isFavorite by remember { mutableStateOf(false) }
     val rating = remember { (1..5).random() }
 
     Card(
+        onClick = onClick,
+
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),

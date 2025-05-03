@@ -1,7 +1,9 @@
 package com.example.medicall.service
 
 
-
+import retrofit2.http.Body
+import retrofit2.http.POST
+import retrofit2.Call
 import com.example.baseUrl
 import com.example.medicall.entity.Doctor
 import retrofit2.Retrofit
@@ -28,6 +30,7 @@ interface Endpoint {
             return INSTANCE!!
         }
     }
+
 
 }
 
