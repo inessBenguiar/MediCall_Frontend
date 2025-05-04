@@ -1,22 +1,27 @@
 package com.example.medicall.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+<<<<<<< HEAD
 import com.example.medicall.R
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
@@ -53,20 +58,91 @@ val specialties = listOf("All", "Cardiology", "Dentist")
 @Composable
 fun DoctorsList(navController: NavController) {
     var selectedSpecialty by remember { mutableStateOf("All") }
+=======
+import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import com.example.medicall.viewmodel.DoctorModel
+import com.example.medicall.util.makeToast
+import com.example.errorMessage
+import com.example.medicall.Navigation.Screens
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        // Filtres par spécialité
+@Composable
+fun DoctorsList(doctorModel: DoctorModel, navController: NavController) {
+    val context = LocalContext.current
+    val data = doctorModel.doctors.value
+    val loading = doctorModel.loading.value
+    val error = doctorModel.error.value
+>>>>>>> 009dfc0e47a21c49ad17618605efd5d4e175b6c2
+
+    var selectedSpecialty by remember { mutableStateOf("All") }
+    val specialties = listOf("All") + data.map { it.specialty }.distinct()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp, vertical = 0.dp) // Reduce vertical padding
+    ) {
         SpecialtyFilter(
             specialties = specialties,
             selectedSpecialty = selectedSpecialty,
             onSpecialtySelected = { selectedSpecialty = it }
         )
 
-        // Liste filtrée des médecins
-        val filteredDoctors = if (selectedSpecialty == "All") doctors
-        else doctors.filter { it.specialty == selectedSpecialty }
+        Spacer(modifier = Modifier.height(0.dp)) // Force no space
 
+<<<<<<< HEAD
         DoctorsList(filteredDoctors,navController)
+=======
+        if (loading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
+            val filteredDoctors = if (selectedSpecialty == "All") data else data.filter {
+                it.specialty == selectedSpecialty
+            }
+
+            // More aggressive adjustments to LazyColumn
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(0.dp), // Zero padding all around
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 0.dp), // Explicitly set top padding to zero
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                items(filteredDoctors) { doctor ->
+                    DoctorCard(
+                        first_name = doctor.first_name,
+                        family_name = doctor.family_name,
+                        specialty = doctor.specialty,
+                        address = doctor.clinic,
+                        phone = doctor.contact,
+                        photoUrl = doctor.photo,
+                        onClick = {
+                            navController.navigate(
+                                Screens.DoctorDetailScreen.route +
+                                        "?firstName=${doctor.first_name}" +
+                                        "&familyName=${doctor.family_name}" +
+                                        "&photoUrl=${doctor.photo}" +
+                                        "&address=${doctor.clinic}" +
+                                        "&phone=${doctor.contact}"
+                            )
+                        }
+                    )
+                }
+
+            }
+        }
+
+        if (error) {
+            errorMessage.makeToast(context)
+            doctorModel.error.value = false
+        }
+>>>>>>> 009dfc0e47a21c49ad17618605efd5d4e175b6c2
     }
 }
 
@@ -76,29 +152,32 @@ fun SpecialtyFilter(
     selectedSpecialty: String,
     onSpecialtySelected: (String) -> Unit
 ) {
+    val scrollState = rememberScrollState()
+
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp)
+            .horizontalScroll(scrollState),
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         specialties.forEach { specialty ->
             Button(
                 onClick = { onSpecialtySelected(specialty) },
+                shape = RoundedCornerShape(10.dp),
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (selectedSpecialty == specialty) Color(0xFF1676F3) else Color(0xFFE8F4FF),
-                    contentColor = if (selectedSpecialty == specialty) Color.White else Color(0xFF1676F3)
-
-                ),
-                shape = RoundedCornerShape(10.dp)
+                    containerColor = if (specialty == selectedSpecialty) Color(0xFF1676F3) else Color(0xFFE8F4FF),
+                    contentColor = if (specialty == selectedSpecialty) Color.White else Color(0xFF1676F3)
+                )
             ) {
                 Text(text = specialty, fontSize = 14.sp)
             }
         }
     }
-    Spacer(modifier = Modifier.height(12.dp))
-
 }
-
 @Composable
+<<<<<<< HEAD
 fun DoctorsList(doctors: List<Doctor>,navController: NavController) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -116,68 +195,79 @@ fun DoctorsList(doctors: List<Doctor>,navController: NavController) {
 
 @Composable
 fun DoctorCard(doctor: Doctor,navController: NavController) {
-    var isFavorite by remember { mutableStateOf(false) }
+=======
+fun DoctorCard(
+    first_name: String,
+    family_name:String,
+    specialty: String,
+    address: String,
+    phone: String,
+    photoUrl: String,
+    onClick: () -> Unit
 
+) {
+>>>>>>> 009dfc0e47a21c49ad17618605efd5d4e175b6c2
+    var isFavorite by remember { mutableStateOf(false) }
+    val rating = remember { (1..5).random() }
+
+<<<<<<< HEAD
     Card( onClick = {navController.navigate(Screens.DoctorInfo.route)},
+=======
+    Card(
+        onClick = onClick,
+
+>>>>>>> 009dfc0e47a21c49ad17618605efd5d4e175b6c2
         shape = RoundedCornerShape(12.dp),
-        modifier = Modifier
-            .width(320.dp)
-            .padding(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        modifier = Modifier.width(320.dp)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(end = 16.dp)
             ) {
-                Image(
-                    painter = painterResource(id = doctor.imageRes),
-                    contentDescription = doctor.name,
+                AsyncImage(
+                    model = photoUrl,
+                    contentDescription = family_name,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(55.dp)
-                        .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
+                        .size(60.dp)
+                        .background(Color.LightGray, RoundedCornerShape(8.dp))
                 )
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = "Rating",
-                        tint = Color(0xFFFFC107),
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Text(
-                        text = doctor.rating.toString(),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black,
-                        modifier = Modifier.padding(start = 4.dp)
-                    )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    for (i in 1..5) {
+                        Icon(
+                            imageVector = if (i <= rating) Icons.Default.Star else Icons.Default.StarBorder,
+                            contentDescription = "Star $i",
+                            tint = Color(0xFFFFC107),
+                            modifier = Modifier.size(12.dp)
+                        )
+                    }
                 }
             }
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(doctor.name, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.Black)
-                Text(doctor.specialty, fontSize = 14.sp, color = Color.Gray)
-
-                Spacer(modifier = Modifier.height(4.dp))
+                Text("$first_name $family_name", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.Black)
+                Text(specialty, fontSize = 12.sp, color = Color.Gray)
+                Spacer(modifier = Modifier.height(3.dp))
 
                 Text(
-                    text = doctor.address,
+                    text = address,
                     fontSize = 12.sp,
                     color = Color.Black,
                     textDecoration = TextDecoration.Underline
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(3.dp))
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
@@ -188,7 +278,7 @@ fun DoctorCard(doctor: Doctor,navController: NavController) {
                     )
                     SelectionContainer {
                         Text(
-                            text = doctor.phone,
+                            text = phone,
                             fontSize = 12.sp,
                             color = Color.Gray,
                             modifier = Modifier.padding(start = 4.dp)
@@ -197,15 +287,21 @@ fun DoctorCard(doctor: Doctor,navController: NavController) {
                 }
             }
 
-            IconButton(onClick = { isFavorite = !isFavorite }) {
-                Icon(
-                    imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                    contentDescription = "Favorite",
-                    tint = if (isFavorite) Color.Red else Color.Gray
-                )
-            }
+            IconButton(
+                onClick = { isFavorite = !isFavorite },
+                modifier = Modifier.size(36.dp),
+                content = {
+                    Icon(
+                        imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = "Favorite",
+                        tint = if (isFavorite) Color.Red else Color.Gray,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            )
         }
     }
+<<<<<<< HEAD
 }
 
 /*@Preview(showBackground = true)
@@ -213,3 +309,6 @@ fun DoctorCard(doctor: Doctor,navController: NavController) {
 fun PreviewDoctorsScreen() {
     DoctorsList()
 }*/
+=======
+}
+>>>>>>> 009dfc0e47a21c49ad17618605efd5d4e175b6c2

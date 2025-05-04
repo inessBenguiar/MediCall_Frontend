@@ -2,7 +2,11 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    kotlin("plugin.serialization") version "2.0.0"
+    id("com.google.devtools.ksp")
+    id("com.google.gms.google-services")
+
+
+
 }
 
 android {
@@ -41,18 +45,28 @@ android {
 }
 
 dependencies {
+    implementation ("androidx.navigation:navigation-compose:2.4.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    implementation ("com.google.android.gms:play-services-auth:20.5.0")
 
-    implementation(platform("io.github.jan-tennert.supabase:bom:3.1.4"))
-    implementation("io.github.jan-tennert.supabase:postgrest-kt")
-    implementation("io.ktor:ktor-client-android:3.1.2")
-    implementation("androidx.compose.material:material-icons-extended:1.5.0")
-    implementation ("androidx.navigation:navigation-compose:2.7.5")
-    implementation ("androidx.compose.material3:material3:1.2.0")
-    implementation ("androidx.compose.ui:ui:1.3.0")
-    implementation ("androidx.compose.material:material:1.3.0")
-    implementation ("androidx.compose.ui:ui-tooling-preview:1.3.0")
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
-    implementation ("androidx.activity:activity-compose:1.4.0")
+    //Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.6.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.6.0")
+    implementation ("com.google.code.gson:gson:2.8.5")
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
+    // navigation
+    implementation ("androidx.navigation:navigation-compose:2.8.3")
+    //MockWebserver
+    androidTestImplementation("com.squareup.okhttp3:mockwebserver:4.9.1")
+
+    val room_version = "2.6.0"
+    implementation ("androidx.room:room-runtime:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")
+    implementation ("androidx.room:room-ktx:$room_version")
+    testImplementation ("androidx.room:room-testing:$room_version")
+    ksp("com.google.dagger:hilt-compiler:2.50")
+    implementation ("androidx.compose.material:material-icons-extended:1.0.5")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -61,9 +75,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.compiler)
-    implementation(libs.androidx.room.common.jvm)
-    implementation(libs.androidx.room.runtime.jvm)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -71,8 +82,4 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    configurations.all {
-        exclude("com.google.guava", "listenablefuture")
-    }
-
 }
