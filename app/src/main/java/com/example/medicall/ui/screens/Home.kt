@@ -13,10 +13,9 @@ import com.example.medicall.ui.components.DoctorsList
 import com.example.medicall.viewmodel.DoctorModel
 
 @Composable
-fun Home(navController:NavController) {
+fun Home(navController:NavController,doctorModel: DoctorModel) {
     var selectedItem by remember { mutableStateOf(0) }
 
-    val doctorModel = remember { DoctorModel(RepositoryHolder.DoctorRepository) }
 
     Scaffold(
         bottomBar = {
