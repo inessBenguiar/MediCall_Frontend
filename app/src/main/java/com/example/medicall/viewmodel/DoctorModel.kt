@@ -1,7 +1,5 @@
 package com.example.medicall.viewmodel
 
-
-
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

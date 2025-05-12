@@ -124,35 +124,30 @@ fun LoginForm(navController: NavController) {
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
-                // Validation: Vérifier si l'email et le mot de passe sont remplis
                 if (email.isBlank() || password.isBlank()) {
-                    // Afficher un Toast si l'email ou le mot de passe est vide
                     Toast.makeText(context, "Please fill in both fields", Toast.LENGTH_SHORT).show()
                 } else {
-                    // Créer la requête de connexion
                     val request = LoginRequest(email = email, password = password)
-
-                    // Faire la requête de connexion
                     authService.login(request).enqueue(object : Callback<LoginResponse> {
                         override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                             if (response.isSuccessful) {
-                                // Vérifier si l'access_token est présent et valide
-                                val accessToken = response.body()?.access_token
-                                if (!accessToken.isNullOrBlank()) {
-                                    // Si l'access_token est valide, rediriger vers la page "home"
-                                    navController.navigate("home")
+                                val loginResponse = response.body()
+                                if (loginResponse != null && !loginResponse.access_token.isNullOrBlank()) {
+                                    when (loginResponse.role) {
+                                        "patient" -> navController.navigate("home/${loginResponse.id}")
+                                        "doctor" -> navController.navigate("doctorhome/${loginResponse.id}")
+                                        else -> navController.navigate("home") // fallback
+                                    }
                                 } else {
-                                    // Si l'access_token est vide ou absent, afficher un message d'erreur
                                     Toast.makeText(context, "Invalid credentials. Please try again.", Toast.LENGTH_SHORT).show()
                                 }
                             } else {
-                                // Si la réponse est échouée, afficher un message d'erreur
                                 Toast.makeText(context, "Login failed. Please check your credentials.", Toast.LENGTH_SHORT).show()
                             }
                         }
 
                         override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                            // Si la requête échoue (problème réseau, serveur, etc.), afficher un message d'erreur
+                            // If the request fails (network issue, server issue, etc.), show an error message
                             Toast.makeText(context, "Network error. Please try again later.", Toast.LENGTH_SHORT).show()
                         }
                     })
