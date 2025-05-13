@@ -5,16 +5,22 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.app.components.Navbar
+import com.example.medicall.repository.RepositoryHolder
 import com.example.medicall.ui.components.Header
 import com.example.medicall.ui.components.DoctorsList
+import com.example.medicall.viewmodel.DoctorModel
 
 @Composable
-fun Home() {
+fun Home(navController:NavController) {
     var selectedItem by remember { mutableStateOf(0) }
+
+    val doctorModel = remember { DoctorModel(RepositoryHolder.DoctorRepository) }
 
     Scaffold(
         bottomBar = {
+
             Navbar(selectedItem) { newIndex ->
                 selectedItem = newIndex
             }
@@ -26,7 +32,7 @@ fun Home() {
                 .padding(innerPadding)
         ) {
             Header(userName = "Bouchra")
-            DoctorsList()
+            DoctorsList(doctorModel = doctorModel, navController = navController)
         }
     }
 }
