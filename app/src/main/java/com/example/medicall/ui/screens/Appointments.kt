@@ -3,32 +3,32 @@ package com.example.medicall.ui.screens
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.ui.res.painterResource
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.unit.dp
-import com.example.app.components.Navbar
-import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Place
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.app.components.Navbar
 import com.example.medicall.R
 
 @Composable
-fun Appointments() {
+fun Appointments(navController: NavController) {
     var selectedItem by remember { mutableStateOf(0) }
     var selectedTab by remember { mutableStateOf(0) }
 
@@ -51,7 +51,7 @@ fun Appointments() {
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-// Header
+            // Header
             Text(
                 text = "My Appointments",
                 style = MaterialTheme.typography.headlineMedium.copy(
@@ -63,64 +63,56 @@ fun Appointments() {
                     .fillMaxWidth()
                     .padding(
                         horizontal = if (isTablet) 24.dp else 16.dp,
-                        vertical = if (isLandscape) 4.dp else 8.dp // Reduced vertical padding
+                        vertical = if (isLandscape) 4.dp else 8.dp
                     )
                     .wrapContentWidth(Alignment.CenterHorizontally)
             )
 
-
             Spacer(modifier = Modifier.height(4.dp))
 
-            var selectedTab by remember { mutableStateOf(0) }
-            val selectedColor = Color(0xFF1676F3)  // Blue for selected tab
-            val unselectedColor = Color(0xFF9CA3AF)  // Gray for unselected tabs
+            val selectedColor = Color(0xFF1676F3)
+            val unselectedColor = Color(0xFF9CA3AF)
 
-            Column {
-                TabRow(
-                    selectedTabIndex = selectedTab,
-                    modifier = Modifier.fillMaxWidth(),
-                    containerColor = Color.Transparent,
-                    divider = {},  // Remove default divider
-                    indicator = { tabPositions ->
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentSize(Alignment.BottomStart)
-                                .offset(x = tabPositions[selectedTab].left)
-                                .width(tabPositions[selectedTab].width)
-                                .height(3.dp)
-                                .background(selectedColor) // Blue indicator
-                        )
-                    }
-                ) {
-                    listOf("Upcoming", "Completed", "Canceled").forEachIndexed { index, title ->
-                        Tab(
-                            selected = selectedTab == index,
-                            onClick = { selectedTab = index },
-                            text = {
-                                Text(
-                                    text = title,
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = if (selectedTab == index) selectedColor else unselectedColor
-                                )
-                            }
-                        )
-                    }
+            TabRow(
+                selectedTabIndex = selectedTab,
+                modifier = Modifier.fillMaxWidth(),
+                containerColor = Color.Transparent,
+                divider = {},
+                indicator = { tabPositions ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentSize(Alignment.BottomStart)
+                            .offset(x = tabPositions[selectedTab].left)
+                            .width(tabPositions[selectedTab].width)
+                            .height(3.dp)
+                            .background(selectedColor)
+                    )
+                }
+            ) {
+                listOf("Upcoming", "Completed", "Canceled").forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTab == index,
+                        onClick = { selectedTab = index },
+                        text = {
+                            Text(
+                                text = title,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (selectedTab == index) selectedColor else unselectedColor
+                            )
+                        }
+                    )
                 }
             }
 
-            // Content
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(
-                        horizontal = if (isTablet) 24.dp else 16.dp,
-                        vertical = 8.dp
-                    )
+                    .padding(horizontal = if (isTablet) 24.dp else 16.dp, vertical = 8.dp)
             ) {
                 when (selectedTab) {
-                    0 -> UpcomingAppointments(isLandscape, isTablet)
+                    0 -> UpcomingAppointments(isLandscape, isTablet, navController)
                     1 -> CompletedAppointments()
                     2 -> CanceledAppointments()
                 }
@@ -129,12 +121,21 @@ fun Appointments() {
     }
 }
 
-// For the LazyVerticalGrid alternative if you still have issues
+data class AppointmentData(
+    val doctorImage: Painter,
+    val doctorName: String,
+    val specialty: String,
+    val clinic: String,
+    val location: String,
+    val date: String,
+    val time: String
+)
+
 @Composable
 fun UpcomingAppointments(
     isLandscape: Boolean,
     isTablet: Boolean,
-    navController: NavController // ✅ Add this parameter
+    navController: NavController
 ) {
     val doctor1 = painterResource(id = R.drawable.doctor1)
     val doctor2 = painterResource(id = R.drawable.doctor2)
@@ -142,12 +143,10 @@ fun UpcomingAppointments(
     val appointments = listOf(
         AppointmentData(doctor1, "Dr. James Robinson", "Orthopedic Surgery", "Elite Ortho Clinic", "USA", "May 22, 2023", "10:00 AM"),
         AppointmentData(doctor2, "Dr. Daniel Lee", "Gastroenterologist", "Digestive Institute", "USA", "June 14, 2023", "15:00 PM"),
-        // ... Other appointments
+        // Add more appointments as needed
     )
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(appointments) { appointment ->
             AppointmentCard(
                 doctorImage = appointment.doctorImage,
@@ -166,19 +165,6 @@ fun UpcomingAppointments(
         }
     }
 }
-
-
-data class AppointmentData(
-    val doctorImage: Painter,
-    val doctorName: String,
-    val specialty: String,
-    val clinic: String,
-    val location: String,
-    val date: String,
-    val time: String
-)
-
-
 
 @Composable
 fun CompletedAppointments() {
@@ -201,21 +187,17 @@ fun AppointmentCard(
     time: String,
     onCancel: () -> Unit,
     onReschedule: () -> Unit,
-    onQrCodeClick: () -> Unit // ✅ Add this
-)
-{
+    onQrCodeClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(6.dp), // Augmente un peu l'ombre
-        colors = CardDefaults.cardColors(containerColor = Color.White) // Fond blanc
-    )
-    {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
+        elevation = CardDefaults.cardElevation(6.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
             // Date & QR Code Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -227,16 +209,15 @@ fun AppointmentCard(
                     contentDescription = "QR Code",
                     modifier = Modifier
                         .size(24.dp)
-                        .clickable { onQrCodeClick() }, // ✅ Added clickable
+                        .clickable { onQrCodeClick() },
                     tint = Color.Black
                 )
-
             }
 
             Divider(
                 color = Color(0xFFE5E7EB),
-                thickness = 0.5.dp, // Ajuste l’épaisseur si nécessaire
-                modifier = Modifier.padding(vertical = 8.dp) // Ajoute un peu d'espace autour si besoin
+                thickness = 0.5.dp,
+                modifier = Modifier.padding(vertical = 8.dp)
             )
 
             // Doctor Info
@@ -267,8 +248,8 @@ fun AppointmentCard(
 
             Divider(
                 color = Color(0xFFE5E7EB),
-                thickness = 0.5.dp, // Ajuste l’épaisseur si nécessaire
-                modifier = Modifier.padding(vertical = 8.dp) // Ajoute un peu d'espace autour si besoin
+                thickness = 0.5.dp,
+                modifier = Modifier.padding(vertical = 8.dp)
             )
 
             // Action Buttons
@@ -280,27 +261,27 @@ fun AppointmentCard(
                     onClick = onCancel,
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = Color(0xFFE5E7EB), // Gris clair pour le fond
-                        contentColor = Color.Black // Couleur du texte
+                        containerColor = Color(0xFFE5E7EB),
+                        contentColor = Color.Black
                     ),
-                    border = BorderStroke(1.dp, Color(0xFFE5E7EB)) // Bordure de la même couleur que le fond
+                    border = BorderStroke(1.dp, Color(0xFFE5E7EB))
                 ) {
                     Text("Cancel")
                 }
 
                 Spacer(modifier = Modifier.width(8.dp))
+
                 Button(
                     onClick = onReschedule,
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF1676F3), // Bleu
-                        contentColor = Color.White // Couleur du texte en blanc
+                        containerColor = Color(0xFF1676F3),
+                        contentColor = Color.White
                     )
                 ) {
                     Text("Reschedule")
                 }
             }
-
         }
     }
 }
