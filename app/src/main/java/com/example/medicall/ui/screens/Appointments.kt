@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.example.app.components.Navbar
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -23,6 +24,7 @@ import androidx.compose.material.icons.filled.Place
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
+import androidx.navigation.NavController
 import com.example.medicall.R
 
 @Composable
@@ -129,17 +131,18 @@ fun Appointments() {
 
 // For the LazyVerticalGrid alternative if you still have issues
 @Composable
-fun UpcomingAppointments(isLandscape: Boolean, isTablet: Boolean) {
+fun UpcomingAppointments(
+    isLandscape: Boolean,
+    isTablet: Boolean,
+    navController: NavController // ✅ Add this parameter
+) {
     val doctor1 = painterResource(id = R.drawable.doctor1)
     val doctor2 = painterResource(id = R.drawable.doctor2)
 
     val appointments = listOf(
         AppointmentData(doctor1, "Dr. James Robinson", "Orthopedic Surgery", "Elite Ortho Clinic", "USA", "May 22, 2023", "10:00 AM"),
         AppointmentData(doctor2, "Dr. Daniel Lee", "Gastroenterologist", "Digestive Institute", "USA", "June 14, 2023", "15:00 PM"),
-        AppointmentData(doctor2, "Dr. Daniel Lee", "Gastroenterologist", "Digestive Institute", "USA", "June 14, 2023", "15:00 PM"),
-        AppointmentData(doctor2, "Dr. Daniel Lee", "Gastroenterologist", "Digestive Institute", "USA", "June 14, 2023", "15:00 PM"),
-        AppointmentData(doctor2, "Dr. Daniel Lee", "Gastroenterologist", "Digestive Institute", "USA", "June 14, 2023", "15:00 PM"),
-        AppointmentData(doctor2, "Dr. Daniel Lee", "Gastroenterologist", "Digestive Institute", "USA", "June 14, 2023", "15:00 PM")
+        // ... Other appointments
     )
 
     LazyColumn(
@@ -155,11 +158,15 @@ fun UpcomingAppointments(isLandscape: Boolean, isTablet: Boolean) {
                 date = appointment.date,
                 time = appointment.time,
                 onCancel = { /* Handle cancel */ },
-                onReschedule = { /* Handle reschedule */ }
+                onReschedule = { /* Handle reschedule */ },
+                onQrCodeClick = {
+                    navController.navigate("qr_code/${appointment.date}-${appointment.time}")
+                }
             )
         }
     }
 }
+
 
 data class AppointmentData(
     val doctorImage: Painter,
@@ -193,8 +200,10 @@ fun AppointmentCard(
     date: String,
     time: String,
     onCancel: () -> Unit,
-    onReschedule: () -> Unit
-) {
+    onReschedule: () -> Unit,
+    onQrCodeClick: () -> Unit // ✅ Add this
+)
+{
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -216,9 +225,12 @@ fun AppointmentCard(
                 Icon(
                     painter = painterResource(id = R.drawable.qricon1),
                     contentDescription = "QR Code",
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable { onQrCodeClick() }, // ✅ Added clickable
                     tint = Color.Black
                 )
+
             }
 
             Divider(
