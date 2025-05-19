@@ -1,9 +1,7 @@
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
@@ -20,7 +18,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-<<<<<<< HEAD
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -28,8 +25,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.navigation.NavController
-import com.example.medicall.R
 import com.example.medicall.ui.Navigation.Screens
 import com.example.medicall.ui.preferences.saveId
 
@@ -41,7 +36,6 @@ import com.example.medicall.ui.preferences.saveId
         }
     }
 }*/
-=======
 import androidx.navigation.NavController
 import com.example.medicall.R
 import com.example.medicall.service.AuthService
@@ -50,7 +44,6 @@ import com.example.medicall.service.LoginResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
->>>>>>> 009dfc0e47a21c49ad17618605efd5d4e175b6c2
 
 @Composable
 fun LoginForm(navController: NavController) {
@@ -85,13 +78,10 @@ fun LoginForm(navController: NavController) {
         Spacer(modifier = Modifier.height(24.dp))
         val context = LocalContext.current
         Button(
-<<<<<<< HEAD
+
             onClick = { saveId(context, password, email ) },
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-=======
-            onClick = { /* Connexion Google */ },
-            colors = ButtonDefaults.buttonColors(containerColor = Color.White),
->>>>>>> 009dfc0e47a21c49ad17618605efd5d4e175b6c2
+           // colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+
             shape = RoundedCornerShape(8.dp),
             border = BorderStroke(1.dp, Color.LightGray),
             modifier = Modifier.fillMaxWidth()
@@ -152,11 +142,10 @@ fun LoginForm(navController: NavController) {
         Spacer(modifier = Modifier.height(16.dp))
         Spacer(modifier = Modifier.height(16.dp))
         Button(
-            onClick = {
-<<<<<<< HEAD
-                navController.navigate(Screens.Home.route){popUpTo(0)} },
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF1676F3)),
-=======
+           onClick = {
+             /*   navController.navigate(Screens.Home.route){popUpTo(0)} },
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF1676F3)),*/
+
                 // Validation: Vérifier si l'email et le mot de passe sont remplis
                 if (email.isBlank() || password.isBlank()) {
                     // Afficher un Toast si l'email ou le mot de passe est vide
@@ -194,7 +183,6 @@ fun LoginForm(navController: NavController) {
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF1676F3)
             ),
->>>>>>> 009dfc0e47a21c49ad17618605efd5d4e175b6c2
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -207,13 +195,12 @@ fun LoginForm(navController: NavController) {
         Row {
             Text("Don’t have an account?", color = Color.Gray)
             Spacer(modifier = Modifier.width(4.dp))
-<<<<<<< HEAD
-            Text("Sign Up", color = Color(0xFF1676F3), modifier = Modifier.clickable { navController.navigate(Screens.MainScreen.route) })
-=======
+
+           // Text("Sign Up", color = Color(0xFF1676F3), modifier = Modifier.clickable { navController.navigate(Screens.MainScreen.route) })
+
             Text("Sign Up", color = Color(0xFF1676F3), modifier = Modifier.clickable {
                 navController.navigate("signup")
             })
->>>>>>> 009dfc0e47a21c49ad17618605efd5d4e175b6c2
         }
     }
 

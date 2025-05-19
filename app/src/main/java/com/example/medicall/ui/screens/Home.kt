@@ -13,25 +13,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.app.components.Navbar
-<<<<<<< HEAD
 import com.example.medicall.ui.Navigation.Screens
 import com.example.medicall.ui.components.Header
-import com.example.medicall.ui.components.DoctorsList
 import com.example.medicall.ui.preferences.deleteId
 import com.example.medicall.R
+import com.example.medicall.repository.RepositoryHolder
+import com.example.medicall.ui.components.DoctorsList
+import com.example.medicall.viewmodel.DoctorModel
 
 
 @Composable
 fun Home(navController: NavController) {
-=======
-import com.example.medicall.repository.RepositoryHolder
-import com.example.medicall.ui.components.Header
-import com.example.medicall.ui.components.DoctorsList
-import com.example.medicall.viewmodel.DoctorModel
 
-@Composable
-fun Home(navController:NavController) {
->>>>>>> 009dfc0e47a21c49ad17618605efd5d4e175b6c2
     var selectedItem by remember { mutableStateOf(0) }
 
     val doctorModel = remember { DoctorModel(RepositoryHolder.DoctorRepository) }
@@ -51,7 +44,7 @@ fun Home(navController:NavController) {
         ) {
             val context = LocalContext.current
             Header(userName = "Bouchra")
-<<<<<<< HEAD
+
             IconButton(onClick = { deleteId(context)
                 navController.navigate(Screens.MainScreen.route){popUpTo(0)}
                }) {Icon(
@@ -59,10 +52,9 @@ fun Home(navController:NavController) {
                         contentDescription = "Logout"
             )
             }
-            DoctorsList(navController)
-=======
-            DoctorsList(doctorModel = doctorModel, navController = navController)
->>>>>>> 009dfc0e47a21c49ad17618605efd5d4e175b6c2
+
+            //DoctorsList(navController = navController)
+
         }
     }
 }

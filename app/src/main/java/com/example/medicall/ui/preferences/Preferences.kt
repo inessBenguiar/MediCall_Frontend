@@ -3,7 +3,7 @@ package com.example.medicall.ui.preferences
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import com.example.medicall.UserInfo
+import com.example.medicall.entity.User
 
 
 fun saveId(context: Context, email: String, pseudo: String ) {
@@ -17,11 +17,11 @@ fun saveId(context: Context, email: String, pseudo: String ) {
     }
 
 
-    fun readId(context: Context): UserInfo {
+    fun readId(context: Context): User {
         val pref = context.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
         val email = pref.getString("email", null)
         val pwd = pref.getString("pwd", null)
-        return UserInfo(email, pwd)
+        return User(email.toString(), pwd.toString())
     }
 
 fun deleteId(context: Context) {

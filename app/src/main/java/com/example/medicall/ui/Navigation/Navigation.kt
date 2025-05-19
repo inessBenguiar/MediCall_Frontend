@@ -18,7 +18,7 @@ fun Navigation(navController: NavHostController) {
     val startDestination = if (userInfo.email != null && userInfo.pwd != null) {
         Screens.Home.route
     } else {
-        Screens.MainScreen.route
+        Screens.Home.route
     }
     NavHost(navController = navController, startDestination = startDestination){
         composable(route = Screens.Register.route) {
@@ -34,7 +34,7 @@ fun Navigation(navController: NavHostController) {
             DoctorInfo(navController = navController)
         }
         composable(route = Screens.Booking.route) {
-            Booking(navController = navController)
+            Booking()
         }
     }
 }

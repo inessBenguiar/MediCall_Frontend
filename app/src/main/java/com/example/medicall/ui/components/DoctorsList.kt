@@ -21,44 +21,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-<<<<<<< HEAD
-import com.example.medicall.R
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
-import com.example.medicall.ui.Navigation.Screens
-
-// Modèle de données pour un médecin
-data class Doctor(
-    val name: String,
-    val specialty: String,
-    val address: String,
-    val phone: String,
-    val rating: Double,
-    val imageRes: Int
-)
-
-// Liste des médecins
-val doctors = listOf(
-    Doctor("Dr. Pediatrician", "Cardiology", "HeartCare Clinic, NY", "(555) 123-4567", 5.0, R.drawable.doctor1),
-    Doctor("Dr. Mistry Brick", "Dentist", "DentalCare Clinic, NY", "(555) 987-6543", 4.8, R.drawable.doctor2),
-    Doctor("Dr. Ether Wall", "Cancer", "Oncology Center, NY", "(555) 246-1357", 4.5, R.drawable.doctor3)
-)
-
-// Liste des spécialités disponibles
-val specialties = listOf("All", "Cardiology", "Dentist")
-
-@Composable
-fun DoctorsList(navController: NavController) {
-    var selectedSpecialty by remember { mutableStateOf("All") }
-=======
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.medicall.viewmodel.DoctorModel
@@ -72,7 +34,6 @@ fun DoctorsList(doctorModel: DoctorModel, navController: NavController) {
     val data = doctorModel.doctors.value
     val loading = doctorModel.loading.value
     val error = doctorModel.error.value
->>>>>>> 009dfc0e47a21c49ad17618605efd5d4e175b6c2
 
     var selectedSpecialty by remember { mutableStateOf("All") }
     val specialties = listOf("All") + data.map { it.specialty }.distinct()
@@ -90,9 +51,6 @@ fun DoctorsList(doctorModel: DoctorModel, navController: NavController) {
 
         Spacer(modifier = Modifier.height(0.dp)) // Force no space
 
-<<<<<<< HEAD
-        DoctorsList(filteredDoctors,navController)
-=======
         if (loading) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -142,7 +100,6 @@ fun DoctorsList(doctorModel: DoctorModel, navController: NavController) {
             errorMessage.makeToast(context)
             doctorModel.error.value = false
         }
->>>>>>> 009dfc0e47a21c49ad17618605efd5d4e175b6c2
     }
 }
 
@@ -177,25 +134,6 @@ fun SpecialtyFilter(
     }
 }
 @Composable
-<<<<<<< HEAD
-fun DoctorsList(doctors: List<Doctor>,navController: NavController) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(doctors) { doctor ->
-            DoctorCard(doctor,navController)
-        }
-
-    }
-
-}
-
-
-@Composable
-fun DoctorCard(doctor: Doctor,navController: NavController) {
-=======
 fun DoctorCard(
     first_name: String,
     family_name:String,
@@ -206,17 +144,12 @@ fun DoctorCard(
     onClick: () -> Unit
 
 ) {
->>>>>>> 009dfc0e47a21c49ad17618605efd5d4e175b6c2
     var isFavorite by remember { mutableStateOf(false) }
     val rating = remember { (1..5).random() }
 
-<<<<<<< HEAD
-    Card( onClick = {navController.navigate(Screens.DoctorInfo.route)},
-=======
     Card(
         onClick = onClick,
 
->>>>>>> 009dfc0e47a21c49ad17618605efd5d4e175b6c2
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -301,14 +234,4 @@ fun DoctorCard(
             )
         }
     }
-<<<<<<< HEAD
 }
-
-/*@Preview(showBackground = true)
-@Composable
-fun PreviewDoctorsScreen() {
-    DoctorsList()
-}*/
-=======
-}
->>>>>>> 009dfc0e47a21c49ad17618605efd5d4e175b6c2

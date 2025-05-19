@@ -4,6 +4,10 @@ import com.google.gson.annotations.SerializedName
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.example.medicall.ui.components.ClinicInfo
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+import java.util.BitSet
 
 @Entity(
     tableName = "doctor",
@@ -26,6 +30,19 @@ data class Doctor(
     val photo: String,
     val contact: String,
     val experience: Int,
-    val availability: String,
-    val clinic: String
+    val availability:  BitSet?,
+    val facebook: String? = null,
+    val instagram: String? = null,
+    val linkedin: String? = null,
+    val clinic: String,
+    val workOnWeekend: Boolean? = null
+)
+data class DoctorResponse(
+    val status: String,
+    val message: String
+)
+data class ClinicResponse(
+    val id: Int,
+    val name: String,
+    val address: String,
 )

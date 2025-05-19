@@ -13,11 +13,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.medicall.Navigation.Screens
+import com.example.medicall.repository.AppointmentRepositoryImpl
+import com.example.medicall.service.Endpoint
+import com.example.medicall.ui.components.BookScreen
+import com.example.medicall.ui.components.UserInformationScreen
+import com.example.medicall.ui.screens.Booking
 import com.example.medicall.ui.screens.DoctorInfo
 import com.example.medicall.ui.screens.Home
 import com.example.medicall.ui.screens.Login
 import com.example.medicall.ui.screens.Register
 import com.example.medicall.ui.theme.MedicallTheme
+import com.example.medicall.viewmodel.AppointmentViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +32,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             MedicallTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
-                    AppNavigator()
+                    //Booking()
+                    UserInformationScreen()
                 }
             }
         }

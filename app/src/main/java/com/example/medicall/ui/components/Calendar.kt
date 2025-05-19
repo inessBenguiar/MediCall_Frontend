@@ -121,7 +121,7 @@ fun CompatibleCalendar(
         // Days grid
         LazyVerticalGrid(
             columns = GridCells.Fixed(7),
-            modifier = Modifier.height(280.dp)
+            modifier = Modifier.height(210.dp)
         ) {
             // Empty cells for days before the 1st
             items((firstDayOfWeek - Calendar.SUNDAY)) { }

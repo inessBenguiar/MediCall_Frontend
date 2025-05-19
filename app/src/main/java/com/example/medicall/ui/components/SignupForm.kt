@@ -22,20 +22,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-<<<<<<< HEAD
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavController
-import com.example.medicall.R
-import com.example.medicall.ui.Navigation.Screens
-import com.example.medicall.ui.preferences.saveId
-
-@Composable
-fun SignupForm(navController: NavController) {
-
-    var fullName by remember { mutableStateOf("") }
-=======
 import androidx.navigation.NavController
 import com.example.medicall.service.AuthService
 import com.example.medicall.service.SignupRequest
@@ -50,7 +36,6 @@ fun SignupForm(navController: NavController) {
     var lastName by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var role by remember { mutableStateOf("") }
->>>>>>> 009dfc0e47a21c49ad17618605efd5d4e175b6c2
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -60,22 +45,17 @@ fun SignupForm(navController: NavController) {
 
     Column(
         modifier = Modifier
-<<<<<<< HEAD
-            .fillMaxSize().fillMaxHeight()
-            .padding(24.dp),
-=======
             .fillMaxSize()
             .padding(12.dp),
->>>>>>> 009dfc0e47a21c49ad17618605efd5d4e175b6c2
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(40.dp))
 
-     /*   Image(
-            painter = painterResource(id = R.drawable.logo),
-            contentDescription = "Logo",
-            modifier = Modifier.size(100.dp)
-        )*/
+        /*   Image(
+               painter = painterResource(id = R.drawable.logo),
+               contentDescription = "Logo",
+               modifier = Modifier.size(100.dp)
+           )*/
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -149,43 +129,12 @@ fun SignupForm(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-<<<<<<< HEAD
-        LabelledTextField(label = "Full Name", value = fullName, onValueChange = { fullName = it }, placeholder = "Enter your full name")
-        LabelledTextField(label = "Email Address", value = email, onValueChange = { email = it }, placeholder = "Enter your email")
-
-
-        //LabelledTextField(label = "Password", value = password, onValueChange = { password = it }, isPassword = true, isVisible = passwordVisible, onVisibilityChange = { passwordVisible = it }, placeholder = "Enter your password")
-        //LabelledTextField(label = "Confirm Password", value = confirmPassword, onValueChange = { confirmPassword = it }, isPassword = true, isVisible = confirmPasswordVisible, onVisibilityChange = { confirmPasswordVisible = it }, placeholder = "Confirm your password")
-
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 8.dp)) {
-            Checkbox(checked = termsAccepted, onCheckedChange = { termsAccepted = it })
-            Text("I agree to the ", color = Color.Gray)
-            Text("Terms of Service", color = Color(0xFF1676F3), modifier = Modifier.clickable { /* Action */ })
-        }
-        val context = LocalContext.current
-        Button(
-            onClick = {
-                navController.navigate(Screens.Home.route)
-                saveId(context,password,email)},
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF1676F3)),
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier.fillMaxWidth().height(48.dp)
-        ) {
-            Text("Get Started", color = Color.White)
-        }
-
-        Row(modifier = Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text("Already have an account?", color = Color.Gray)
-            Spacer(modifier = Modifier.width(4.dp))
-            Text("Log in", color = Color(0xFF1676F3), modifier = Modifier.clickable { navController.navigate(Screens.MainScreen.route) })
-=======
         Row {
             Text("Already have an account?", color = Color.Gray)
             Spacer(modifier = Modifier.width(4.dp))
             Text("Log In", color = Color(0xFF1676F3), modifier = Modifier.clickable {
                 navController.navigate("login")
             })
->>>>>>> 009dfc0e47a21c49ad17618605efd5d4e175b6c2
         }
     }
 }

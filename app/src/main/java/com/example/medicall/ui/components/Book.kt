@@ -1,5 +1,7 @@
 package com.example.medicall.ui.components
 
+import BookAppointmentRequest
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -17,41 +17,38 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-
-import androidx.compose.material.Surface
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.AlertDialogDefaults.containerColor
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItemDefaults.contentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.navigation.NavController
-import java.util.Calendar
+import com.example.medicall.viewmodel.AppointmentViewModel
 
 @Composable
 fun TimeSlotSelection(
     date: String,
-    slots: List<String>,
+    slots: List<Int>, // Change to List<Int> to represent the slot numbers
 ) {
     var showAllSlots by remember { mutableStateOf(false) }
     val visibleSlots = if (showAllSlots) slots else slots.take(4)
@@ -74,13 +71,13 @@ fun TimeSlotSelection(
                         else MaterialTheme.colorScheme.primary
                     )
                 ) {
-                    Text(slot)
+                    Text(convertSlotToTime(slot)) // Use the conversion function here
                 }
             }
         }
         if (showAllSlots) {
             FullScreenTimeSlotsDialog(
-                slots = slots,
+                slots = slots.map { convertSlotToTime(it) },
                 onDismiss = { showAllSlots = false },
                 onSlotSelected = { time ->
                     showAllSlots = false
@@ -90,7 +87,14 @@ fun TimeSlotSelection(
     }
 }
 
-
+// Conversion Function
+fun convertSlotToTime(slot: Int): String {
+    val hour = slot / 2
+    val minutes = (slot % 2) * 30
+    val period = if (hour < 12) "AM" else "PM"
+    val formattedHour = if (hour == 0) 12 else if (hour > 12) hour - 12 else hour
+    return String.format("%02d:%02d %s", formattedHour, minutes, period)
+}
 @Composable
 fun FullScreenTimeSlotsDialog(
     slots: List<String>,
@@ -160,109 +164,110 @@ private fun TimeSlotButton(
         Text(text = time)
     }
 }
-    @Composable
-    fun Book (navController: NavController) {
-        val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
-        var selectedDate by remember { mutableStateOf<String?>(null) }
-        //var availableSlots by remember { mutableStateOf<List<String>>(emptyList()) }
-        val availableSlots = remember {
-            listOf(
-                "09:00", "09:30", "10:00", "10:30",
-                "14:00", "14:30", "15:00", "15:30"
+
+
+
+@Composable
+fun BookScreen(viewModel: AppointmentViewModel) {
+    // State for selected date
+    var selectedDate by remember { mutableStateOf<String?>(null) }
+    var slotChoosing by remember { mutableStateOf<Int?>(null) }
+    var slotClick by remember { mutableStateOf<Boolean>(false) }
+    val context = LocalContext.current
+    // Collect available slots and booking status from ViewModel
+    val availableSlots by viewModel.availableSlots.collectAsState()
+    val bookingStatus by viewModel.bookingStatus.collectAsState()
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+    ) {
+        // Header
+        Text(
+            text = "Book an Appointment",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp, top = 10.dp)
+        )
+
+        // Calendar
+        CompatibleCalendar(
+            year = 2025,
+            month = 4, // Calendar.MAY (0-based index)
+            bookedDates = setOf("2025-05-15", "2025-05-11"), // Sample booked dates
+            onDateSelected = { date ->
+                selectedDate = date
+                viewModel.fetchAvailableSlots(doctorId = 26, date = date) // Fetch slots for selected date
+            }
+        )
+        selectedDate?.let {
+            Text(
+                text = "Available Slots for $it",
+                style = MaterialTheme.typography.titleMedium
             )
         }
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(screenHeight)
-                .padding(16.dp),
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBackIosNew,
-                    contentDescription = "Go back Arrow",
-                    modifier = Modifier
-                        .requiredSize(size = 30.dp)
-                )
-                Text(
-                    text = "Select Date and Time",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 25.sp,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 8.dp), // Add some spacing
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.size(30.dp))
 
-            }
-            val calendar = Calendar.getInstance()
-            val currentYear = calendar.get(Calendar.YEAR)
-            val currentMonth = calendar.get(Calendar.MONTH) // 0-11
-
-            // Sample booked dates (3 dates in the current month)
-            val bookedDates = setOf(
-                "%04d-%02d-15".format(currentYear, currentMonth + 1),
-                "%04d-%02d-20".format(currentYear, currentMonth + 1),
-                "%04d-%02d-25".format(currentYear, currentMonth + 1)
-            )
-
-            CompatibleCalendar(
-                year = currentYear,
-                month = currentMonth,
-                bookedDates = bookedDates,
-                onDateSelected = { date ->
-                    println("Selected date: $date")
-                    selectedDate = date
-                }
-            )
-            Text(
-                text = "Available Time SLots",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                fontSize = 30.sp,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 8.dp), // Add some spacing
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            //Display the Available time Slots
-            if (selectedDate != null) {
-                TimeSlotSelection(
-                    date = selectedDate!!,
-                    slots = availableSlots,
-                )
-            }
-            Button(
-                onClick = {},
-
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF007AFF), // Set the background color here
-                    contentColor = Color.White // You can set the content (text) color
-                ),
+        // Display available slots
+        if (availableSlots.isNotEmpty()) {
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp)
-                    .clip(
-                        RoundedCornerShape(10.dp)
-                    )
+                    .padding(vertical = 16.dp)
             ) {
+                items(availableSlots.size) { index ->
+                    OutlinedButton(onClick = { slotChoosing = availableSlots[index].slot;
+                        slotClick = !slotClick },
+                        modifier = Modifier.padding(4.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = if (slotChoosing == availableSlots[index].slot && slotClick)
+                                 Color(0xFF007AFF)
+                             else
+                            Color.Transparent
+                        )) {
 
-                Text(
-                    "Book an Appointment",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 22.sp
-                )
+                        Text(text = availableSlots[index].time)
+                    }
+                }
             }
+        } else if (selectedDate != null) {
+            Text(text = "No available slots", color = Color.Red, modifier = Modifier.padding(bottom = 10.dp))
+        }
+
+
+        if (slotChoosing != null) {
+            Button(
+                onClick = {
+                    if (selectedDate != null) {
+                        viewModel.bookAppointment(
+                            BookAppointmentRequest(
+                                doctorId = 26,
+                                patientId = 1,
+                                date = selectedDate!!,
+                                slotPosition = slotChoosing!!,
+                            )
+                        )
+                        viewModel.fetchAvailableSlots(doctorId = 26, date = selectedDate!!);
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF007AFF),
+                    contentColor = Color.White
+                ),
+                modifier = Modifier.fillMaxWidth().height(45.dp)
+            ) {
+                Text(text = "Book Appointment")
+            }
+
+
+        }
+        // Show booking status
+        bookingStatus?.let {
+            Toast.makeText(context,it, Toast.LENGTH_SHORT).show()
+
         }
     }
-
+}
