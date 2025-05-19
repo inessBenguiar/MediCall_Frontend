@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.medicall.entity.ClinicResponse
 import com.example.medicall.entity.Doctor
 import com.example.medicall.repository.DoctorRepository
 import com.example.medicall.service.ApiResult
@@ -48,12 +49,7 @@ class DoctorModel(private val repository: DoctorRepository): ViewModel() {
     private val _clinics = mutableStateListOf<ClinicResponse>()
     val clinics: List<ClinicResponse> = _clinics
 
-    fun searchClinics(query: String) {
-        viewModelScope.launch {
-            _clinics.clear()
-            _clinics.addAll(repository.searchClinics(query))
-        }
-    }
+
 
     init {
         getDoctors()
@@ -147,7 +143,7 @@ class DoctorModel(private val repository: DoctorRepository): ViewModel() {
         }
     }
 
-    fun saveProfileInformation() {
+    /*fun saveProfileInformation() {
         viewModelScope.launch {
             _doctorInfo.value?.let { info ->
                 _saveProfileState.value = SaveProfileState.Loading
@@ -173,7 +169,7 @@ class DoctorModel(private val repository: DoctorRepository): ViewModel() {
                 _saveProfileState.value = SaveProfileState.Error("No doctor information available")
             }
         }
-    }
+    }*/
 
     fun saveWorkingDays(doctorId: Long) {
         viewModelScope.launch {

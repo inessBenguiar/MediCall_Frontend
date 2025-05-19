@@ -35,16 +35,7 @@ class DoctorRepository(private val endpoint: Endpoint) {
         }
     }.flowOn(Dispatchers.IO)
 
-    /***
-     * Look for a clinic
-     */
-    override suspend fun searchClinics(query: String): List<Clinic> {
-        return try {
-            val remoteClinics = endpoint.searchClinics(query)
-            remoteClinics
-        } catch (e: Exception) {
-        }
-    }
+
     /**
      * Updates doctor profile information
      */

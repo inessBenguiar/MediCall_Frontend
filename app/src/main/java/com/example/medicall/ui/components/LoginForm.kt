@@ -1,7 +1,9 @@
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
@@ -18,24 +20,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import com.example.medicall.ui.Navigation.Screens
-import com.example.medicall.ui.preferences.saveId
-
-/*class LoginActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            LoginForm()
-        }
-    }
-}*/
 import androidx.navigation.NavController
 import com.example.medicall.R
 import com.example.medicall.service.AuthService
@@ -72,16 +56,14 @@ fun LoginForm(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text("Log in to your Account", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        Text("Log in to your Account", fontSize = 20.sp, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
         Text("Welcome back, please enter your details.", fontSize = 14.sp, color = Color.Gray)
 
         Spacer(modifier = Modifier.height(24.dp))
-        val context = LocalContext.current
+
         Button(
-
-            onClick = { saveId(context, password, email ) },
-           // colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-
+            onClick = { /* Connexion Google */ },
+            colors = ButtonDefaults.buttonColors(containerColor = Color.White),
             shape = RoundedCornerShape(8.dp),
             border = BorderStroke(1.dp, Color.LightGray),
             modifier = Modifier.fillMaxWidth()
@@ -137,44 +119,35 @@ fun LoginForm(navController: NavController) {
             Spacer(modifier = Modifier.weight(1f))
             Text("Forgot Password?", color = Color(0xFF1676F3), modifier = Modifier.clickable { /* Action */ })
         }
-        if(rememberMe){
-            saveId(context,email, password)}
+
         Spacer(modifier = Modifier.height(16.dp))
         Spacer(modifier = Modifier.height(16.dp))
         Button(
-           onClick = {
-             /*   navController.navigate(Screens.Home.route){popUpTo(0)} },
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF1676F3)),*/
-
-                // Validation: Vérifier si l'email et le mot de passe sont remplis
+            onClick = {
                 if (email.isBlank() || password.isBlank()) {
-                    // Afficher un Toast si l'email ou le mot de passe est vide
                     Toast.makeText(context, "Please fill in both fields", Toast.LENGTH_SHORT).show()
                 } else {
-                    // Créer la requête de connexion
                     val request = LoginRequest(email = email, password = password)
-
-                    // Faire la requête de connexion
                     authService.login(request).enqueue(object : Callback<LoginResponse> {
                         override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                             if (response.isSuccessful) {
-                                // Vérifier si l'access_token est présent et valide
-                                val accessToken = response.body()?.access_token
-                                if (!accessToken.isNullOrBlank()) {
-                                    // Si l'access_token est valide, rediriger vers la page "home"
-                                    navController.navigate("home")
+                                val loginResponse = response.body()
+                                if (loginResponse != null && !loginResponse.access_token.isNullOrBlank()) {
+                                    when (loginResponse.role) {
+                                        "patient" -> navController.navigate("home/${loginResponse.id}")
+                                        "doctor" -> navController.navigate("doctorhome/${loginResponse.id}")
+                                        else -> navController.navigate("home") // fallback
+                                    }
                                 } else {
-                                    // Si l'access_token est vide ou absent, afficher un message d'erreur
                                     Toast.makeText(context, "Invalid credentials. Please try again.", Toast.LENGTH_SHORT).show()
                                 }
                             } else {
-                                // Si la réponse est échouée, afficher un message d'erreur
                                 Toast.makeText(context, "Login failed. Please check your credentials.", Toast.LENGTH_SHORT).show()
                             }
                         }
 
                         override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                            // Si la requête échoue (problème réseau, serveur, etc.), afficher un message d'erreur
+                            // If the request fails (network issue, server issue, etc.), show an error message
                             Toast.makeText(context, "Network error. Please try again later.", Toast.LENGTH_SHORT).show()
                         }
                     })
@@ -195,9 +168,6 @@ fun LoginForm(navController: NavController) {
         Row {
             Text("Don’t have an account?", color = Color.Gray)
             Spacer(modifier = Modifier.width(4.dp))
-
-           // Text("Sign Up", color = Color(0xFF1676F3), modifier = Modifier.clickable { navController.navigate(Screens.MainScreen.route) })
-
             Text("Sign Up", color = Color(0xFF1676F3), modifier = Modifier.clickable {
                 navController.navigate("signup")
             })
