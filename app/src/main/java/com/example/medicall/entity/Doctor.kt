@@ -30,12 +30,12 @@ data class Doctor(
     val photo: String,
     val contact: String,
     val experience: Int,
-    val availability:  BitSet?,
-    val facebook: String? = null,
+    val address: String,
+   /* val facebook: String? = null,
     val instagram: String? = null,
     val linkedin: String? = null,
     val clinic: String,
-    val workOnWeekend: Boolean? = null
+    val workOnWeekend: Boolean? = null*/
 )
 data class DoctorResponse(
     val status: String,

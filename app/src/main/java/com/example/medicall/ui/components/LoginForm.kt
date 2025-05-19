@@ -51,7 +51,7 @@ fun LoginForm(navController: NavController) {
         Image(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = "Logo",
-            modifier = Modifier.size(100.dp)
+            modifier = Modifier.size(30.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -157,7 +157,7 @@ fun LoginForm(navController: NavController) {
                 containerColor = Color(0xFF1676F3)
             ),
             shape = RoundedCornerShape(8.dp),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().height(60.dp)
         ) {
             Text("Log in", color = Color.White)
         }

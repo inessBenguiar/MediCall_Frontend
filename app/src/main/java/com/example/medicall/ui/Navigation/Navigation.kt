@@ -24,15 +24,15 @@ fun Navigation(navController: NavHostController) {
         composable(route = Screens.Register.route) {
             Register(navController = navController)
         }
-        composable(route = Screens.Home.route) {
+        /*composable(route = Screens.Home.route) {
             Home(navController = navController)
-        }
+        }*/
         composable(route = Screens.MainScreen.route) {
             Login(navController = navController)
         }
-        composable(route = Screens.DoctorInfo.route) {
+       /* composable(route = Screens.DoctorInfo.route) {
             DoctorInfo(navController = navController)
-        }
+        }*/
         composable(route = Screens.Booking.route) {
             Booking()
         }

@@ -40,8 +40,8 @@ class DoctorModel(private val repository: DoctorRepository): ViewModel() {
     val saveProfileState: StateFlow<SaveProfileState> = _saveProfileState.asStateFlow()
 
     // Local state for form data
-    private val _doctorInfo = MutableStateFlow<DoctorInfo?>(null)
-    val doctorInfo: StateFlow<DoctorInfo?> = _doctorInfo.asStateFlow()
+    private val _doctorInfo = MutableStateFlow<DoctorInformation?>(null)
+    val doctorInfo: StateFlow<DoctorInformation?> = _doctorInfo.asStateFlow()
 
     private val _workingDays = MutableStateFlow<List<WorkingDay>>(emptyList())
     val workingDays: StateFlow<List<WorkingDay>> = _workingDays.asStateFlow()
@@ -82,7 +82,7 @@ class DoctorModel(private val repository: DoctorRepository): ViewModel() {
     }
 
     // Functions to fetch data
-    fun loadDoctorProfile(doctorId: Long) {
+    /*fun loadDoctorProfile(doctorId: Long) {
         viewModelScope.launch {
             _profileState.value = ProfileState.Loading
 
@@ -94,12 +94,12 @@ class DoctorModel(private val repository: DoctorRepository): ViewModel() {
                         _profileState.value = ProfileState.Success(doctor)
 
                         // Update the local form state
-                        _doctorInfo.value = DoctorInfo(
+                        _doctorInfo.value = DoctorInformation(
                             userId = doctor.user_id,
                             specialty = doctor.specialty,
                             contact = doctor.contact ?: "",
                             experience = doctor.experience ?: 0,
-                            clinic = doctor.clinic ?: "",
+                            clinic = doctor.address ?: "",
                             facebook = doctor.facebook ?: "",
                             instagram = doctor.instagram ?: "",
                             linkedin = doctor.linkedin ?: "",
@@ -111,7 +111,7 @@ class DoctorModel(private val repository: DoctorRepository): ViewModel() {
                 }
             }
         }
-    }
+    }*/
 
     fun loadWorkingDays(doctorId: Long) {
         viewModelScope.launch {
@@ -131,7 +131,7 @@ class DoctorModel(private val repository: DoctorRepository): ViewModel() {
     }
 
     // Functions to update data
-    fun updateDoctorInfo(doctorInfo: DoctorInfo) {
+    fun updateDoctorInfo(doctorInfo: DoctorInformation) {
         _doctorInfo.update { doctorInfo }
     }
 
@@ -231,7 +231,7 @@ class DoctorModel(private val repository: DoctorRepository): ViewModel() {
     }
 
     // Form data class
-    data class DoctorInfo(
+    data class DoctorInformation(
         val userId: Long,
         val specialty: String,
         val contact: String,

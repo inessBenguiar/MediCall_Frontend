@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.medicall.ui.Navigation.Screens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,7 +70,7 @@ fun DoctorDetails(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(300.dp)
+                    .height(100.dp)
                     .clip(
                         RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp)
                     )
@@ -134,14 +135,14 @@ fun DoctorDetails(
 
                 // Take Appointment Button
                 Button(
-                    onClick = { /* Handle appointment action here */ },
+                    onClick = { navController.navigate(Screens.Booking.route) },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF1976D2),
                         contentColor = Color.White
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(55.dp)
+                        .height(90.dp)
                         .clip(RoundedCornerShape(16.dp))
                 ) {
                     Text(

@@ -18,6 +18,7 @@ import com.example.medicall.Navigation.Screens
 import com.example.medicall.repository.RepositoryHolder
 import com.example.medicall.ui.components.AddPrescriptionForm
 import com.example.medicall.ui.components.AppointmentDetails
+import com.example.medicall.ui.screens.Booking
 import com.example.medicall.ui.screens.DoctorHome
 import com.example.medicall.ui.screens.DoctorInfo
 import com.example.medicall.ui.screens.Home
@@ -88,9 +89,12 @@ fun AppNavigator() {
         ) {
             DoctorInfo(navController)
         }
-        composable("appointmentDetails/{appointmentId}") { backStackEntry ->
+       composable("appointmentDetails/{appointmentId}") { backStackEntry ->
             val appointmentId = backStackEntry.arguments?.getString("appointmentId")?.toIntOrNull() ?: 0
             AppointmentDetails(navController = navController, appointmentId = appointmentId)
+        }
+        composable(route = com.example.medicall.ui.Navigation.Screens.Booking.route) {
+            Booking()
         }
     }
 }

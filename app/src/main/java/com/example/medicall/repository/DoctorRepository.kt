@@ -14,6 +14,7 @@ import java.util.BitSet
 
 
 class DoctorRepository(private val endpoint: Endpoint) {
+
     suspend fun getDoctors() = endpoint.getDoctors();
 
     /**
