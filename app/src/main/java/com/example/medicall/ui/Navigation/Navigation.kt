@@ -15,11 +15,7 @@ fun Navigation(navController: NavHostController) {
     val context = LocalContext.current
     val userInfo = readId(context)
 
-    val startDestination = if (userInfo.email != null && userInfo.pwd != null) {
-        Screens.Home.route
-    } else {
-        Screens.Home.route
-    }
+   /*
     NavHost(navController = navController, startDestination = startDestination){
         composable(route = Screens.Register.route) {
             Register(navController = navController)
@@ -36,5 +32,5 @@ fun Navigation(navController: NavHostController) {
         composable(route = Screens.Booking.route) {
             Booking()
         }
-    }
+    }*/
 }

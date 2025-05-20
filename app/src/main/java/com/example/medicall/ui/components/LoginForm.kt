@@ -25,6 +25,7 @@ import com.example.medicall.R
 import com.example.medicall.service.AuthService
 import com.example.medicall.service.LoginRequest
 import com.example.medicall.service.LoginResponse
+import com.example.medicall.ui.preferences.saveId
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -133,8 +134,9 @@ fun LoginForm(navController: NavController) {
                             if (response.isSuccessful) {
                                 val loginResponse = response.body()
                                 if (loginResponse != null && !loginResponse.access_token.isNullOrBlank()) {
+                                    saveId(context, loginResponse.id)
                                     when (loginResponse.role) {
-                                        "patient" -> navController.navigate("home/${loginResponse.id}")
+                                        "patient" -> {navController.navigate("home/${loginResponse.id}")}
                                         "doctor" -> navController.navigate("doctorhome/${loginResponse.id}")
                                         else -> navController.navigate("home") // fallback
                                     }

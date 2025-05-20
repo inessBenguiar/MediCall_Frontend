@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -18,6 +19,7 @@ import com.example.medicall.Navigation.Screens
 import com.example.medicall.repository.RepositoryHolder
 import com.example.medicall.ui.components.AddPrescriptionForm
 import com.example.medicall.ui.components.AppointmentDetails
+import com.example.medicall.ui.preferences.readId
 import com.example.medicall.ui.screens.Booking
 import com.example.medicall.ui.screens.DoctorHome
 import com.example.medicall.ui.screens.DoctorInfo
@@ -47,9 +49,17 @@ class MainActivity : ComponentActivity() {
 fun AppNavigator() {
     val navController = rememberNavController()
     val doctorModel = DoctorModel(RepositoryHolder.DoctorRepository)
+    val context = LocalContext.current
+    val start:String
+    val userId = readId(context)
+    //Is user still connected ?
+    if ( userId != null){
+        start = "home/${userId}"
+    }else{
+        start = Screens.MainScreen.route
+    }
 
-
-    NavHost(navController = navController, startDestination = Screens.MainScreen.route) {
+    NavHost(navController = navController, startDestination = start) {
         composable(Screens.MainScreen.route) {
            Login(navController)
         }

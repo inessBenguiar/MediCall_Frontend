@@ -31,6 +31,7 @@ import com.example.medicall.Navigation.Screens
 @Composable
 fun DoctorsList(doctorModel: DoctorModel, navController: NavController) {
     val context = LocalContext.current
+
     val data = doctorModel.doctors.value
     val loading = doctorModel.loading.value
     val error = doctorModel.error.value

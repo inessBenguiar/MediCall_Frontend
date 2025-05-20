@@ -51,9 +51,9 @@ class DoctorModel(private val repository: DoctorRepository): ViewModel() {
 
 
 
-    init {
+    /*init {
         getDoctors()
-    }
+    }*/
 
     fun getDoctors() {
         loading.value = true
@@ -70,16 +70,7 @@ class DoctorModel(private val repository: DoctorRepository): ViewModel() {
             }
         }
     }
-    fun navigateToDetail(
-        firstName: String,
-        familyName: String,
-        photoUrl: String,
-        address: String,
-        phone: String,
-        email: String
-    ) {
 
-    }
 
     // Functions to fetch data
     /*fun loadDoctorProfile(doctorId: Long) {

@@ -26,6 +26,10 @@ fun Home(navController: NavController, doctorModel: DoctorModel, userId: String)
 
     val userService = remember { UserService.createInstance() }
 
+    LaunchedEffect(Unit){
+        doctorModel.getDoctors()
+    }
+
     LaunchedEffect(userId) {
         userService.getUserById(userId).enqueue(object : Callback<com.example.medicall.service.UserResponse> {
             override fun onResponse(
@@ -60,6 +64,7 @@ fun Home(navController: NavController, doctorModel: DoctorModel, userId: String)
                 .padding(innerPadding)
         ) {
             Header(userName = userName)
+
             DoctorsList(doctorModel = doctorModel, navController = navController)
         }
     }

@@ -194,9 +194,7 @@ fun BookScreen(viewModel: AppointmentViewModel) {
         )
 
         // Calendar
-        CompatibleCalendar(
-            year = 2025,
-            month = 4, // Calendar.MAY (0-based index)
+        MultiMonthCalendar(
             bookedDates = setOf("2025-05-15", "2025-05-11"), // Sample booked dates
             onDateSelected = { date ->
                 selectedDate = date

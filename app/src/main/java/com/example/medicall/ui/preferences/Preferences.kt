@@ -1,34 +1,29 @@
 package com.example.medicall.ui.preferences
 
 import android.content.Context
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-import com.example.medicall.entity.User
 
-
-fun saveId(context: Context, email: String, pseudo: String ) {
+//Function to save user_id
+    fun saveId(context: Context, user_id: String) {
 
         val pref = context.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
         with(pref.edit()) {
-            putString("email", email)
-            putString("pwd", pseudo)
+            putString("user_id", user_id)
             apply()
         }
     }
 
-
-    fun readId(context: Context): User {
+//Function to get user_id
+    fun readId(context: Context):String? {
         val pref = context.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
-        val email = pref.getString("email", null)
-        val pwd = pref.getString("pwd", null)
-        return User(email.toString(), pwd.toString())
+        val user_id = pref.getString("user_id", null)
+        return user_id;
     }
 
-fun deleteId(context: Context) {
-    val pref = context.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
-    with(pref.edit()) {
-        remove("email")
-        remove("pwd")
-        apply()
+//Function to delete the user_id field
+    fun deleteId(context: Context) {
+        val pref = context.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        with(pref.edit()) {
+            remove("user_id")
+            apply()
     }
 }
