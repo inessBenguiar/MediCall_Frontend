@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import android.util.Log
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -26,6 +27,7 @@ import com.example.medicall.service.AuthService
 import com.example.medicall.service.LoginRequest
 import com.example.medicall.service.LoginResponse
 import com.example.medicall.ui.preferences.saveId
+import com.google.firebase.messaging.FirebaseMessaging
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -36,6 +38,16 @@ fun LoginForm(navController: NavController) {
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var rememberMe by remember { mutableStateOf(false) }
+
+    var fcmToken by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(Unit) {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                fcmToken = task.result
+            }
+        }
+    }
 
 
     val context = LocalContext.current
@@ -128,7 +140,7 @@ fun LoginForm(navController: NavController) {
                 if (email.isBlank() || password.isBlank()) {
                     Toast.makeText(context, "Please fill in both fields", Toast.LENGTH_SHORT).show()
                 } else {
-                    val request = LoginRequest(email = email, password = password)
+                    val request = LoginRequest(email = email, password = password, fcm_token = fcmToken)
                     authService.login(request).enqueue(object : Callback<LoginResponse> {
                         override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                             if (response.isSuccessful) {
@@ -149,9 +161,10 @@ fun LoginForm(navController: NavController) {
                         }
 
                         override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                            // If the request fails (network issue, server issue, etc.), show an error message
-                            Toast.makeText(context, "Network error. Please try again later.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Network error: ${t.localizedMessage}", Toast.LENGTH_LONG).show()
+                            Log.e("LOGIN_ERROR", "Failure: ${t.message}", t)
                         }
+
                     })
                 }
             },

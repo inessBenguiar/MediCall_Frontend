@@ -1,1 +1,29 @@
-{"web":{"client_id":"298268118106-5gqgqk3qtu463s4vhh4ckifielaokmvk.apps.googleusercontent.com","project_id":"medicall16","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://oauth2.googleapis.com/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_secret":"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","redirect_uris":["http://localhost:3000/auth/google/callback"]}}
+{
+  "project_info": {
+    "project_number": "1072345526656",
+    "project_id": "medicall-2a95d",
+    "storage_bucket": "medicall-2a95d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1072345526656:android:fd51e698bdc62777551165",
+        "android_client_info": {
+          "package_name": "com.example.medicall"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4udo4bUhlescA6XMcsx7aMogEH9zab-8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

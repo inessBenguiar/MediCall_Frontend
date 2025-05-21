@@ -28,11 +28,18 @@ import com.example.medicall.ui.screens.Login
 import com.example.medicall.ui.screens.Register
 import com.example.medicall.ui.theme.MedicallTheme
 import com.example.medicall.viewmodel.DoctorModel
+import android.content.pm.PackageManager
+
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1001)
+            }
+        }
         enableEdgeToEdge()
         setContent {
             MedicallTheme {
@@ -79,6 +86,7 @@ fun AppNavigator() {
 
         composable(
             route = "home/{userId}"
+
         ) { backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId") ?: ""
             Home(navController, doctorModel, userId)
