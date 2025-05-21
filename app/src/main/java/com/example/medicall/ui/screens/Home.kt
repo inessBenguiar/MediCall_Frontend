@@ -6,10 +6,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.app.components.Navbar
-import com.example.medicall.repository.RepositoryHolder
 import com.example.medicall.service.UserService
 import com.example.medicall.ui.components.Header
 import com.example.medicall.ui.components.DoctorsList
@@ -49,9 +47,12 @@ fun Home(navController: NavController, doctorModel: DoctorModel, userId: String)
 
     Scaffold(
         bottomBar = {
-            Navbar(selectedItem) { newIndex ->
-                selectedItem = newIndex
-            }
+            Navbar(
+                selectedIndex = selectedItem,
+                onItemSelected = { selectedItem = it },
+                navController = navController,
+                userId = userId
+            )
         }
     ) { innerPadding ->
         Column(

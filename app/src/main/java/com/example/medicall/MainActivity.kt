@@ -1,7 +1,9 @@
 package com.example.medicall
 
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -22,75 +24,89 @@ import com.example.medicall.ui.screens.Login
 import com.example.medicall.ui.components.AddPrescriptionForm
 import com.example.medicall.ui.components.AppointmentDetails
 import com.example.medicall.ui.screens.DoctorHome
+import com.example.medicall.ui.screens.ProfileScreen
 import com.example.medicall.ui.screens.Register
 import com.example.medicall.ui.theme.MedicallTheme
 import com.example.medicall.viewmodel.DoctorModel
+import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            MedicallTheme {
-                Surface(color = MaterialTheme.colorScheme.background) {
-                    AppNavigator()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1001)
+            }
+        }
+            enableEdgeToEdge()
+            setContent {
+                MedicallTheme {
+
+
                 }
             }
         }
     }
-}
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun AppNavigator() {
-    val navController = rememberNavController()
-    val doctorModel = DoctorModel(RepositoryHolder.DoctorRepository)
+    @RequiresApi(Build.VERSION_CODES.O)
+    @Composable
+    fun AppNavigator() {
+        val navController = rememberNavController()
+        val doctorModel = DoctorModel(RepositoryHolder.DoctorRepository)
 
 
-    NavHost(navController = navController, startDestination = Screens.MainScreen.route) {
-        composable(Screens.MainScreen.route) {
-           Login(navController)
-        }
+        NavHost(navController = navController, startDestination = Screens.MainScreen.route) {
+            composable(Screens.MainScreen.route) {
+                Login(navController)
+            }
+            composable(
+                route = "profil/{userId}",
+                arguments = listOf(navArgument("userId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val userId = backStackEntry.arguments?.getString("userId") ?: ""
+                ProfileScreen(navController = navController, userId = userId)
+            }
+            composable(
+                route = "doctorhome/{userId}",
+                arguments = listOf(navArgument("userId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val userId = backStackEntry.arguments?.getInt("userId") ?: -1
+                if (userId != -1) {
+                    DoctorHome(navController, userId)
+                }
+            }
+            composable(Screens.Add.route) {
+                AddPrescriptionForm(navController)
+            }
 
-        composable(
-            route = "doctorhome/{userId}",
-            arguments = listOf(navArgument("userId") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val userId = backStackEntry.arguments?.getInt("userId") ?: -1
-            if (userId != -1) {
-                DoctorHome(navController, userId)
+            composable(
+                route = "home/{userId}"
+            ) { backStackEntry ->
+                val userId = backStackEntry.arguments?.getString("userId") ?: ""
+                Home(navController, doctorModel, userId)
+            }
+
+            composable(Screens.Register.route) {
+                Register(navController)
+            }
+            composable(
+                route = "${Screens.DoctorDetailScreen.route}?firstName={firstName}&familyName={familyName}&photoUrl={photoUrl}&address={address}&phone={phone}",
+                arguments = listOf(
+                    navArgument("firstName") { type = NavType.StringType; nullable = true },
+                    navArgument("familyName") { type = NavType.StringType; nullable = true },
+                    navArgument("photoUrl") { type = NavType.StringType; nullable = true },
+                    navArgument("address") { type = NavType.StringType; nullable = true },
+                    navArgument("phone") { type = NavType.StringType; nullable = true }
+                )
+            ) {
+                DoctorInfo(navController)
+            }
+            composable("appointmentDetails/{appointmentId}") { backStackEntry ->
+                val appointmentId =
+                    backStackEntry.arguments?.getString("appointmentId")?.toIntOrNull() ?: 0
+                AppointmentDetails(navController = navController, appointmentId = appointmentId)
             }
         }
-        composable(Screens.Add.route) {
-            AddPrescriptionForm(navController)
-        }
-
-        composable(
-            route = "home/{userId}"
-        ) { backStackEntry ->
-            val userId = backStackEntry.arguments?.getString("userId") ?: ""
-            Home(navController, doctorModel, userId)
-        }
-
-        composable(Screens.Register.route) {
-            Register(navController)
-        }
-        composable(
-            route = "${Screens.DoctorDetailScreen.route}?firstName={firstName}&familyName={familyName}&photoUrl={photoUrl}&address={address}&phone={phone}",
-            arguments = listOf(
-                navArgument("firstName") { type = NavType.StringType; nullable = true },
-                navArgument("familyName") { type = NavType.StringType; nullable = true },
-                navArgument("photoUrl") { type = NavType.StringType; nullable = true },
-                navArgument("address") { type = NavType.StringType; nullable = true },
-                navArgument("phone") { type = NavType.StringType; nullable = true }
-            )
-        ) {
-            DoctorInfo(navController)
-        }
-        composable("appointmentDetails/{appointmentId}") { backStackEntry ->
-            val appointmentId = backStackEntry.arguments?.getString("appointmentId")?.toIntOrNull() ?: 0
-            AppointmentDetails(navController = navController, appointmentId = appointmentId)
-        }
     }
-}
+

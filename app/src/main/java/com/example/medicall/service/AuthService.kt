@@ -8,10 +8,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.Call
 
 
-
 interface AuthService {
     @POST("auth/login")
     fun login(@Body request: LoginRequest): Call<LoginResponse>
+
+
 
     @POST("auth/signup")
     fun signup(@Body request: SignupRequest): Call<SignupResponse>

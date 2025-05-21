@@ -21,10 +21,11 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.medicall.R
 import com.example.medicall.service.AuthService
 import com.example.medicall.service.LoginRequest
 import com.example.medicall.service.LoginResponse
+import com.example.medicall.R
+import com.google.firebase.messaging.FirebaseMessaging
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -127,35 +128,46 @@ fun LoginForm(navController: NavController) {
                 if (email.isBlank() || password.isBlank()) {
                     Toast.makeText(context, "Please fill in both fields", Toast.LENGTH_SHORT).show()
                 } else {
-                    val request = LoginRequest(email = email, password = password)
-                    authService.login(request).enqueue(object : Callback<LoginResponse> {
-                        override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                            if (response.isSuccessful) {
-                                val loginResponse = response.body()
-                                if (loginResponse != null && !loginResponse.access_token.isNullOrBlank()) {
-                                    when (loginResponse.role) {
-                                        "patient" -> navController.navigate("home/${loginResponse.id}")
-                                        "doctor" -> navController.navigate("doctorhome/${loginResponse.id}")
-                                        else -> navController.navigate("home") // fallback
-                                    }
-                                } else {
-                                    Toast.makeText(context, "Invalid credentials. Please try again.", Toast.LENGTH_SHORT).show()
-                                }
-                            } else {
-                                Toast.makeText(context, "Login failed. Please check your credentials.", Toast.LENGTH_SHORT).show()
-                            }
-                        }
+                    // 🔐 Générer le token FCM avant de faire la requête de login
+                    FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val fcmToken = task.result
 
-                        override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                            // If the request fails (network issue, server issue, etc.), show an error message
-                            Toast.makeText(context, "Network error. Please try again later.", Toast.LENGTH_SHORT).show()
+                            val request = LoginRequest(
+                                email = email,
+                                password = password,
+                                fcm_token = fcmToken
+                            )
+
+                            authService.login(request).enqueue(object : Callback<LoginResponse> {
+                                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                                    if (response.isSuccessful) {
+                                        val loginResponse = response.body()
+                                        if (loginResponse != null && !loginResponse.access_token.isNullOrBlank()) {
+                                            when (loginResponse.role) {
+                                                "patient" -> navController.navigate("home/${loginResponse.id}")
+                                                "doctor" -> navController.navigate("doctorhome/${loginResponse.id}")
+                                                else -> navController.navigate("home") // fallback
+                                            }
+                                        } else {
+                                            Toast.makeText(context, "Invalid credentials. Please try again.", Toast.LENGTH_SHORT).show()
+                                        }
+                                    } else {
+                                        Toast.makeText(context, "Login failed. Please check your credentials.", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                                    Toast.makeText(context, "Network error. Please try again later.", Toast.LENGTH_SHORT).show()
+                                }
+                            })
+                        } else {
+                            Toast.makeText(context, "Erreur FCM: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                         }
-                    })
+                    }
                 }
             },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF1676F3)
-            ),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1676F3)),
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
