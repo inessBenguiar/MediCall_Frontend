@@ -2,13 +2,12 @@ package com.example.medicall.ui.components
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Phone
@@ -21,13 +20,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.util.*
 import androidx.navigation.NavController
 import com.example.medicall.service.Appointment
 import com.example.medicall.service.AppointmentService
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.temporal.WeekFields
+import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.format.DateTimeFormatter
+import org.threeten.bp.temporal.TemporalField
+import org.threeten.bp.temporal.WeekFields
 import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -37,8 +38,6 @@ fun AppointmentsList(navController: NavController, userId: Int) {
     var appointments by remember { mutableStateOf<List<Appointment>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
 
-    val textPrimaryColor = Color(0xFF2B3A67)
-    val textSecondaryColor = Color(0xFF6E798C)
 
     LaunchedEffect(userId) {
         try {

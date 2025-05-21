@@ -1,6 +1,8 @@
 package com.example.medicall.ui.screens
 
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -15,12 +17,15 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DoctorHome(navController: NavController, userId: Int) {
     var selectedItem by remember { mutableStateOf(0) }
     var userName by remember { mutableStateOf("Loading...") }
     val context = LocalContext.current
     val userService = remember { UserService.createInstance() }
+
+
 
     LaunchedEffect(userId) {
         userService.getUserById(userId.toString()).enqueue(object : Callback<com.example.medicall.service.UserResponse> {
@@ -44,7 +49,7 @@ fun DoctorHome(navController: NavController, userId: Int) {
 
     Scaffold(
         bottomBar = {
-            NavbarDoctor(selectedItem) { newIndex ->
+            NavbarDoctor(navController, selectedItem) { newIndex ->
                 selectedItem = newIndex
             }
         }
@@ -54,7 +59,7 @@ fun DoctorHome(navController: NavController, userId: Int) {
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            Header(userName = userName)
+            Header(userName = userName, context)
             AppointmentsList(navController = navController,userId)
         }
     }

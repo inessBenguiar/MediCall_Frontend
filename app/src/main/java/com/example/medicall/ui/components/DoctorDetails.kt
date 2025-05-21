@@ -24,6 +24,7 @@ import com.example.medicall.ui.Navigation.Screens
 @Composable
 fun DoctorDetails(
     navController: NavController,
+    doctorId: Int,
     firstName: String?,
     familyName: String?,
     photoUrl: String?,
@@ -135,7 +136,7 @@ fun DoctorDetails(
 
                 // Take Appointment Button
                 Button(
-                    onClick = { navController.navigate(Screens.Booking.route) },
+                    onClick = { navController.navigate("booking/${doctorId}") },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF1976D2),
                         contentColor = Color.White

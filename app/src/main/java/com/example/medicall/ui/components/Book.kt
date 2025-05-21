@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialogDefaults.containerColor
 import androidx.compose.material3.Button
@@ -43,6 +44,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavController
+import com.example.medicall.ui.preferences.readId
 import com.example.medicall.viewmodel.AppointmentViewModel
 
 @Composable
@@ -50,6 +53,7 @@ fun TimeSlotSelection(
     date: String,
     slots: List<Int>, // Change to List<Int> to represent the slot numbers
 ) {
+
     var showAllSlots by remember { mutableStateOf(false) }
     val visibleSlots = if (showAllSlots) slots else slots.take(4)
     if (slots.isEmpty()) {
@@ -169,8 +173,10 @@ private fun TimeSlotButton(
 
 
 @Composable
-fun BookScreen(viewModel: AppointmentViewModel) {
+fun BookScreen(viewModel: AppointmentViewModel, navController: NavController,doctorId: Int) {
+    var message by remember { mutableStateOf("") }
     // State for selected date
+
     var selectedDate by remember { mutableStateOf<String?>(null) }
     var slotChoosing by remember { mutableStateOf<Int?>(null) }
     var slotClick by remember { mutableStateOf<Boolean>(false) }
@@ -186,12 +192,21 @@ fun BookScreen(viewModel: AppointmentViewModel) {
             .padding(16.dp),
     ) {
         // Header
-        Text(
-            text = "Book an Appointment",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp, top = 10.dp)
-        )
+        Row (modifier = Modifier.height(40.dp)) {
+            IconButton(onClick = { navController.popBackStack() }) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Back",
+                tint = Color.White
+            )
+                Text(
+                    text = "Book an Appointment",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 16.dp, top = 10.dp)
+                )
+
+            } }
 
         // Calendar
         MultiMonthCalendar(
@@ -217,15 +232,25 @@ fun BookScreen(viewModel: AppointmentViewModel) {
                     .padding(vertical = 16.dp)
             ) {
                 items(availableSlots.size) { index ->
-                    OutlinedButton(onClick = { slotChoosing = availableSlots[index].slot;
-                        slotClick = !slotClick },
+                    OutlinedButton(
+                        onClick = {
+                            slotChoosing = availableSlots[index].slot
+                            slotClick = !slotClick
+                        },
                         modifier = Modifier.padding(4.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = if (slotChoosing == availableSlots[index].slot && slotClick)
-                                 Color(0xFF007AFF)
-                             else
-                            Color.Transparent
-                        )) {
+                            containerColor = if (slotChoosing == availableSlots[index].slot && slotClick) {
+                                Color(0xFF007AFF) // Selected state
+                            } else {
+                                Color.Transparent // Default state
+                            },
+                            contentColor = if (slotChoosing == availableSlots[index].slot && slotClick) {
+                                Color.White // Selected text color
+                            } else {
+                                Color.Black
+                            }
+                        )
+                    ) {
 
                         Text(text = availableSlots[index].time)
                     }
@@ -242,8 +267,8 @@ fun BookScreen(viewModel: AppointmentViewModel) {
                     if (selectedDate != null) {
                         viewModel.bookAppointment(
                             BookAppointmentRequest(
-                                doctorId = 26,
-                                patientId = 1,
+                                doctorId = doctorId,
+                                patientId = readId(context)!!.toInt(),
                                 date = selectedDate!!,
                                 slotPosition = slotChoosing!!,
                             )
@@ -264,8 +289,9 @@ fun BookScreen(viewModel: AppointmentViewModel) {
         }
         // Show booking status
         bookingStatus?.let {
-            Toast.makeText(context,it, Toast.LENGTH_SHORT).show()
-
+            message = it
+            Toast.makeText(context,message, Toast.LENGTH_SHORT).show()
+            message = ""
         }
     }
 }

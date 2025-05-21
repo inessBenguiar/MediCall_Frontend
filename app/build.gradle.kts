@@ -49,6 +49,8 @@ dependencies {
     implementation ("androidx.navigation:navigation-compose:2.4.0")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
     implementation ("com.google.android.gms:play-services-auth:20.5.0")
+    implementation ("androidx.core:core-ktx:1.9.0")
+    implementation ("com.jakewharton.threetenabp:threetenabp:1.4.0")
 
     //Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.6.0")
@@ -62,6 +64,7 @@ dependencies {
     androidTestImplementation("com.squareup.okhttp3:mockwebserver:4.9.1")
     //
     implementation("com.squareup.moshi:moshi:1.15.0")
+
     implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
     kapt("com.squareup.moshi:moshi-kotlin-codegen:1.15.0") // For @JsonClass
 

@@ -1,4 +1,5 @@
 package com.example.medicall.ui.components
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,10 +17,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.foundation.border
 import androidx.compose.material3.*
+import com.example.medicall.ui.preferences.deleteId
 
 
 @Composable
-fun Header(userName: String) {
+fun Header(userName: String, context: Context) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -43,7 +45,7 @@ fun Header(userName: String) {
                     color = Color.Gray
                 )
             }
-            IconButton(onClick = { /* TODO: Handle Notification Click */ }) {
+            IconButton(onClick = { deleteId(context) }) {
                 Icon(
                     imageVector = Icons.Default.Notifications,
                     contentDescription = "Notifications",
@@ -101,9 +103,9 @@ fun SearchBar() {
     )
 }
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun PreviewGreetingSection() {
     Header(userName = "Bouchra")
-}
+}*/
 

@@ -8,7 +8,7 @@ import com.example.medicall.ui.components.BookScreen
 import com.example.medicall.viewmodel.AppointmentViewModel
 
 @Composable
-fun Booking (){
+fun Booking (navController: NavController, doctorId: Int){
 
     // Initialize the Repository
     val repository = AppointmentRepositoryImpl()
@@ -17,5 +17,5 @@ fun Booking (){
     val viewModel = AppointmentViewModel(repository)
 
     // Pass the ViewModel to the BookScreen
-    BookScreen(viewModel = viewModel)
+    BookScreen(viewModel = viewModel, navController = navController, doctorId)
 }

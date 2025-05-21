@@ -63,7 +63,7 @@ fun Home(navController: NavController, doctorModel: DoctorModel, userId: String)
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            Header(userName = userName)
+            Header(userName = userName, context)
 
             DoctorsList(doctorModel = doctorModel, navController = navController)
         }

@@ -84,7 +84,8 @@ fun DoctorsList(doctorModel: DoctorModel, navController: NavController) {
                         onClick = {
                             navController.navigate(
                                 Screens.DoctorDetailScreen.route +
-                                        "?firstName=${doctor.first_name}" +
+                                        "?id=${doctor.user_id}"+
+                                        "&firstName=${doctor.first_name}" +
                                         "&familyName=${doctor.family_name}" +
                                         "&photoUrl=${doctor.photo}" +
                                         "&address=${doctor.address}" +

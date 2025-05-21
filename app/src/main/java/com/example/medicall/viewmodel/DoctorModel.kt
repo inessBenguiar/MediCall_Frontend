@@ -2,7 +2,7 @@ package com.example.medicall.viewmodel
 
 
 
-import android.net.Uri
+import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -11,19 +11,20 @@ import com.example.medicall.entity.ClinicResponse
 import com.example.medicall.entity.Doctor
 import com.example.medicall.repository.DoctorRepository
 import com.example.medicall.service.ApiResult
+import com.example.medicall.ui.components.UserInfo
 import com.example.medicall.ui.components.WorkingDay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class DoctorModel(private val repository: DoctorRepository): ViewModel() {
+class DoctorModel(private val repository: DoctorRepository, private val context : Context): ViewModel() {
     val doctors = mutableStateOf(emptyList<Doctor>())
     val loading = mutableStateOf(false)
     val error = mutableStateOf(false)
     val errorMessage = mutableStateOf("Error: Try again please")
     val doctor = mutableStateOf<Doctor?>(null)
+
 
     //Profile States
     // States
@@ -39,15 +40,7 @@ class DoctorModel(private val repository: DoctorRepository): ViewModel() {
     private val _saveProfileState = MutableStateFlow<SaveProfileState>(SaveProfileState.Initial)
     val saveProfileState: StateFlow<SaveProfileState> = _saveProfileState.asStateFlow()
 
-    // Local state for form data
-    private val _doctorInfo = MutableStateFlow<DoctorInformation?>(null)
-    val doctorInfo: StateFlow<DoctorInformation?> = _doctorInfo.asStateFlow()
 
-    private val _workingDays = MutableStateFlow<List<WorkingDay>>(emptyList())
-    val workingDays: StateFlow<List<WorkingDay>> = _workingDays.asStateFlow()
-
-    private val _clinics = mutableStateListOf<ClinicResponse>()
-    val clinics: List<ClinicResponse> = _clinics
 
 
 
@@ -72,153 +65,95 @@ class DoctorModel(private val repository: DoctorRepository): ViewModel() {
     }
 
 
-    // Functions to fetch data
-    /*fun loadDoctorProfile(doctorId: Long) {
+
+
+
+    fun updateDoctorProfile(userInfo: UserInfo) {
         viewModelScope.launch {
-            _profileState.value = ProfileState.Loading
+            _photoUploadState.value = PhotoUploadState.Loading
+            println("Begin updating....")
+            val doctorInfo = DoctorInformation(
+                userId = userInfo.id.toLong(),
+                specialty = userInfo.specialty,
+                contact = userInfo.phoneNumber,
+                experience = userInfo.experience.toIntOrNull() ?: 0,
+                clinicAddress = userInfo.clinic.address ?: "",
+                clinicName = userInfo.clinic.name ?: "",
+                clinicMap = userInfo.clinic.mapLocation ?: "",
+                breakstart= userInfo.breakTime.start,
+                breakend= userInfo.breakTime.end,
+                startworkTime = userInfo.startWorkTime,
+                endworkTime = userInfo.endWorkTime,
+                facebook = if (userInfo.hasFacebook) userInfo.facebookUrl else "",
+                instagram = if (userInfo.hasInstagram) userInfo.instagramUrl else "",
+                linkedin = if (userInfo.hasLinkedIn) userInfo.linkedInUrl else "",
+                workOnWeekend = userInfo.worksOnWeekend,
+                workEveryDay = userInfo.workEveryday,
+                workingDay = userInfo.workingDays,
+                photoUrl = null // Will come from backend after update
+            )
 
-            repository.getDoctorProfile(doctorId).collect { result ->
-                when (result) {
-                    is ApiResult.Loading -> _profileState.value = ProfileState.Loading
-                    is ApiResult.Success -> {
-                        val doctor = result.data
-                        _profileState.value = ProfileState.Success(doctor)
-
-                        // Update the local form state
-                        _doctorInfo.value = DoctorInformation(
-                            userId = doctor.user_id,
-                            specialty = doctor.specialty,
-                            contact = doctor.contact ?: "",
-                            experience = doctor.experience ?: 0,
-                            clinic = doctor.address ?: "",
-                            facebook = doctor.facebook ?: "",
-                            instagram = doctor.instagram ?: "",
-                            linkedin = doctor.linkedin ?: "",
-                            workOnWeekend = doctor.workOnWeekend ?: false,
-                            photoUrl = doctor.photo
-                        )
-                    }
-                    is ApiResult.Error -> _profileState.value = ProfileState.Error(result.message)
+            val photoBytes = userInfo.photoUri?.let { uri ->
+                try {
+                    context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+                } catch (e: Exception) {
+                    _photoUploadState.value = PhotoUploadState.Error("Error reading image: ${e.localizedMessage}")
+                    return@launch
                 }
             }
-        }
-    }*/
-
-    fun loadWorkingDays(doctorId: Long) {
-        viewModelScope.launch {
-            _workingDaysState.value = WorkingDaysState.Loading
-
-            repository.getWorkingDays(doctorId).collect { result ->
-                when (result) {
-                    is ApiResult.Loading -> _workingDaysState.value = WorkingDaysState.Loading
-                    is ApiResult.Success<*> -> {
-                        _workingDays.value = result.data as List<WorkingDay>
-                        _workingDaysState.value = WorkingDaysState.Success(result.data)
-                    }
-                    is ApiResult.Error -> _workingDaysState.value = WorkingDaysState.Error(result.message)
-                }
-            }
-        }
-    }
-
-    // Functions to update data
-    fun updateDoctorInfo(doctorInfo: DoctorInformation) {
-        _doctorInfo.update { doctorInfo }
-    }
-
-    fun updateWorkingDay(index: Int, workingDay: WorkingDay) {
-        val currentList = _workingDays.value.toMutableList()
-        if (index in currentList.indices) {
-            currentList[index] = workingDay
-            _workingDays.value = currentList
-        }
-    }
-
-    /*fun saveProfileInformation() {
-        viewModelScope.launch {
-            _doctorInfo.value?.let { info ->
-                _saveProfileState.value = SaveProfileState.Loading
-
-                repository.updateDoctorProfile(
-                    doctorId = info.userId,
-                    specialty = info.specialty,
-                    experience = info.experience,
-                    contact = info.contact,
-                    clinic = info.clinic,
-                    facebook = info.facebook.takeIf { it.isNotBlank() },
-                    instagram = info.instagram.takeIf { it.isNotBlank() },
-                    linkedin = info.linkedin.takeIf { it.isNotBlank() },
-                    workOnWeekend = info.workOnWeekend
-                ).collect { result ->
-                    when (result) {
-                        is ApiResult.Loading -> _saveProfileState.value = SaveProfileState.Loading
-                        is ApiResult.Success -> _saveProfileState.value = SaveProfileState.Success
-                        is ApiResult.Error -> _saveProfileState.value = SaveProfileState.Error(result.message)
-                    }
-                }
-            } ?: run {
-                _saveProfileState.value = SaveProfileState.Error("No doctor information available")
-            }
-        }
-    }*/
-
-    fun saveWorkingDays(doctorId: Long) {
-        viewModelScope.launch {
-            _workingDaysState.value = WorkingDaysState.Saving
-
-            repository.updateWorkingDays(
-                doctorId,
-                _workingDays.value
+            println("Call Repository....")
+            repository.updateDoctorProfile(
+                //userId = readId(context)!!.toInt(),
+                userId= 26,
+                specialty = doctorInfo.specialty,
+                experience = doctorInfo.experience,
+                contact = doctorInfo.contact,
+                clinicName = doctorInfo.clinicName,
+                clinicAddress = doctorInfo.clinicAddress,
+                clinicMap = doctorInfo.clinicMap,
+                breakstart= doctorInfo.breakstart,
+                breakend= doctorInfo.breakend,
+                startworkTime = doctorInfo.startworkTime,
+                endworkTime = doctorInfo.endworkTime,
+                facebook = doctorInfo.facebook,
+                instagram = doctorInfo.instagram,
+                linkedin = doctorInfo.linkedin,
+                workOnWeekend = doctorInfo.workOnWeekend,
+                workEveryDay = doctorInfo.workEveryDay,
+                workingDays = doctorInfo.workingDay,
+                photoBytes = photoBytes
             ).collect { result ->
                 when (result) {
-                    is ApiResult.Loading -> _workingDaysState.value = WorkingDaysState.Saving
-                    is ApiResult.Success -> _workingDaysState.value = WorkingDaysState.SaveSuccess
-                    is ApiResult.Error -> _workingDaysState.value = WorkingDaysState.Error(result.message)
+                    is ApiResult.Loading -> _photoUploadState.value = PhotoUploadState.Loading
+                    is ApiResult.Success -> {
+                        println(result.data.message)
+                    }
+                    is ApiResult.Error -> {
+                        _photoUploadState.value = PhotoUploadState.Error(result.message)
+                    }
                 }
             }
         }
     }
 
-
-
-    // Reset states
-    fun resetSaveState() {
-        _saveProfileState.value = SaveProfileState.Initial
-    }
-
-    fun resetPhotoUploadState() {
-        _photoUploadState.value = PhotoUploadState.Initial
-    }
 
     // State classes
     sealed class ProfileState {
         object Initial : ProfileState()
-        object Loading : ProfileState()
-        data class Success(val doctor: Doctor) : ProfileState()
-        data class Error(val message: String) : ProfileState()
     }
 
     sealed class WorkingDaysState {
         object Initial : WorkingDaysState()
-        object Loading : WorkingDaysState()
-        object Saving : WorkingDaysState()
-        object SaveSuccess : WorkingDaysState()
-        data class Success(val workingDays: List<WorkingDay>) : WorkingDaysState()
-        data class Error(val message: String) : WorkingDaysState()
     }
 
     sealed class PhotoUploadState {
         object Initial : PhotoUploadState()
         object Loading : PhotoUploadState()
-        data class Success(val photoUrl: String) : PhotoUploadState()
         data class Error(val message: String) : PhotoUploadState()
     }
 
     sealed class SaveProfileState {
         object Initial : SaveProfileState()
-        object Loading : SaveProfileState()
-        object Success : SaveProfileState()
-        data class Error(val message: String) : SaveProfileState()
     }
 
     // Form data class
@@ -227,11 +162,19 @@ class DoctorModel(private val repository: DoctorRepository): ViewModel() {
         val specialty: String,
         val contact: String,
         val experience: Int,
-        val clinic: String,
+        val clinicName: String,
+        val clinicAddress: String,
+        val clinicMap: String,
+        val breakstart: String,
+        val breakend: String,
+        val startworkTime: String,
+        val endworkTime: String,
         val facebook: String,
         val instagram: String,
         val linkedin: String,
         val workOnWeekend: Boolean,
+        val workEveryDay: Boolean,
+        val workingDay: List<WorkingDay>,
         val photoUrl: String? = null
     )
 }

@@ -134,7 +134,7 @@ fun LoginForm(navController: NavController) {
                             if (response.isSuccessful) {
                                 val loginResponse = response.body()
                                 if (loginResponse != null && !loginResponse.access_token.isNullOrBlank()) {
-                                    saveId(context, loginResponse.id)
+                                    saveId(context, loginResponse.id, loginResponse.role)
                                     when (loginResponse.role) {
                                         "patient" -> {navController.navigate("home/${loginResponse.id}")}
                                         "doctor" -> navController.navigate("doctorhome/${loginResponse.id}")

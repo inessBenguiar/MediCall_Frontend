@@ -4,63 +4,46 @@ package com.example.medicall.service
 import BookAppointmentRequest
 import BookResponse
 import TimeSlot
-import com.example.medicall.entity.ClinicResponse
 import com.example.medicall.entity.Doctor
 import com.example.medicall.entity.DoctorResponse
-import com.example.medicall.ui.components.UserInfo
 import com.example.medicall.ui.components.WorkingDay
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface Endpoint {
 
     @GET("doctors")
     suspend fun getDoctors(): List<Doctor>
 
-    /**
-     * Get doctor profile information
-     */
     @GET("doctors/{doctorId}")
     suspend fun getDoctorProfile(@Path("doctorId") doctorId: Long): Response<Doctor>
 
-    /**
-     * Update doctor profile information
-     */
+    @GET("doctors/{doctorId}/working-days")
+    suspend fun getDoctorWorkingDays(@Path("doctorId") doctorId: Long): Response<List<WorkingDay>>
+
+    @Multipart
     @POST("doctors/update")
     suspend fun updateDoctorProfile(
-        @Body request: UserInfo
+        @Part("data") data: RequestBody,
+        @Part photo: MultipartBody.Part? = null
     ): Response<DoctorResponse>
 
-    @GET("/clinics/search")
-    suspend fun searchClinics(
-        @Query("query") query: String,
-        @Query("limit") limit: Int = 5
-    ): List<ClinicResponse>
-
-
-    /**
-     * Get doctor working days
-     */
-    @GET("doctors/{doctorId}/working-days")
-    suspend fun getDoctorWorkingDays(
-        @Path("doctorId") doctorId: Long
-    ): Response<List<WorkingDay>>
-
-    /**
-     * Update doctor working days
-     */
-    @PUT("doctors/{doctorId}/working-days")
-    suspend fun updateDoctorWorkingDays(
+    @Multipart
+    @POST("doctors/{doctorId}/photo")
+    suspend fun uploadDoctorPhoto(
         @Path("doctorId") doctorId: Long,
-        @Body workingDays: List<WorkingDay>
-    ): Response<Void>
+        @Part photo: MultipartBody.Part
+    ): Response<PhotoUploadResponse>
 
     //Endpoints for Booking
     @GET("doctors/{id}/{date}/available-slots")
@@ -81,6 +64,7 @@ interface Endpoint {
             if(INSTANCE ==null) {
                 INSTANCE = Retrofit.Builder().baseUrl("http://localhost:3000/")
                     .addConverterFactory(GsonConverterFactory.create())
+
                     .build().
                     create(Endpoint::class.java)
             }

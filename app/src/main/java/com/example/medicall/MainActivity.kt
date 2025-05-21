@@ -17,9 +17,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.medicall.Navigation.Screens
 import com.example.medicall.repository.RepositoryHolder
+import com.example.medicall.ui.Navigation.Screens.DoctorProfil
 import com.example.medicall.ui.components.AddPrescriptionForm
 import com.example.medicall.ui.components.AppointmentDetails
-import com.example.medicall.ui.preferences.readId
+import com.example.medicall.ui.components.DoctorProfil
+import com.example.medicall.ui.preferences.*
 import com.example.medicall.ui.screens.Booking
 import com.example.medicall.ui.screens.DoctorHome
 import com.example.medicall.ui.screens.DoctorInfo
@@ -28,11 +30,14 @@ import com.example.medicall.ui.screens.Login
 import com.example.medicall.ui.screens.Register
 import com.example.medicall.ui.theme.MedicallTheme
 import com.example.medicall.viewmodel.DoctorModel
+import com.jakewharton.threetenabp.AndroidThreeTen
 
 class MainActivity : ComponentActivity() {
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AndroidThreeTen.init(this)
         enableEdgeToEdge()
         setContent {
             MedicallTheme {
@@ -48,13 +53,17 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppNavigator() {
     val navController = rememberNavController()
-    val doctorModel = DoctorModel(RepositoryHolder.DoctorRepository)
     val context = LocalContext.current
+    val doctorModel = DoctorModel(RepositoryHolder.DoctorRepository, context)
+
     val start:String
     val userId = readId(context)
+    val role = readRole(context)
     //Is user still connected ?
     if ( userId != null){
+        if(role== "patient")
         start = "home/${userId}"
+        else start = "doctorhome/${userId}"
     }else{
         start = Screens.MainScreen.route
     }
@@ -88,8 +97,9 @@ fun AppNavigator() {
             Register(navController)
         }
         composable(
-            route = "${Screens.DoctorDetailScreen.route}?firstName={firstName}&familyName={familyName}&photoUrl={photoUrl}&address={address}&phone={phone}",
+            route = "${Screens.DoctorDetailScreen.route}?id={id}&firstName={firstName}&familyName={familyName}&photoUrl={photoUrl}&address={address}&phone={phone}",
             arguments = listOf(
+                navArgument("id") { type = NavType.StringType; nullable = true },
                 navArgument("firstName") { type = NavType.StringType; nullable = true },
                 navArgument("familyName") { type = NavType.StringType; nullable = true },
                 navArgument("photoUrl") { type = NavType.StringType; nullable = true },
@@ -103,8 +113,12 @@ fun AppNavigator() {
             val appointmentId = backStackEntry.arguments?.getString("appointmentId")?.toIntOrNull() ?: 0
             AppointmentDetails(navController = navController, appointmentId = appointmentId)
         }
-        composable(route = com.example.medicall.ui.Navigation.Screens.Booking.route) {
-            Booking()
+        composable("booking/{doctorId}") { backStackEntry ->
+            val doctorId = backStackEntry.arguments?.getString("doctorId")
+            Booking(navController, doctorId!!.toInt())
+        }
+        composable(route = com.example.medicall.ui.Navigation.Screens.DoctorProfil.route) {
+           DoctorProfil(doctorModel, navController)
         }
     }
 }

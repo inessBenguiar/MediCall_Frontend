@@ -6,6 +6,7 @@ import com.example.medicall.ui.components.DoctorDetails
 
 @Composable
 fun DoctorInfo(navController: NavController) {
+    val doctorId = navController.currentBackStackEntry?.arguments?.getString("id")
     val firstName = navController.currentBackStackEntry?.arguments?.getString("firstName")
     val familyName = navController.currentBackStackEntry?.arguments?.getString("familyName")
     val photoUrl = navController.currentBackStackEntry?.arguments?.getString("photoUrl")
@@ -14,6 +15,7 @@ fun DoctorInfo(navController: NavController) {
 
     DoctorDetails(
         navController = navController,
+        doctorId = doctorId!!.toInt() ,
         firstName = firstName,
         familyName = familyName,
         photoUrl = photoUrl,
