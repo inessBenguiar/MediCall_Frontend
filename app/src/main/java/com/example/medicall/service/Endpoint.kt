@@ -4,6 +4,8 @@ package com.example.medicall.service
 import BookAppointmentRequest
 import BookResponse
 import TimeSlot
+import com.example.baseUrl
+import com.example.medicall.entity.ClinicResponse
 import com.example.medicall.entity.Doctor
 import com.example.medicall.entity.DoctorResponse
 import com.example.medicall.ui.components.WorkingDay
@@ -25,6 +27,9 @@ interface Endpoint {
     @GET("doctors")
     suspend fun getDoctors(): List<Doctor>
 
+    /**
+     * Get doctor profile information
+     */
     @GET("doctors/{doctorId}")
     suspend fun getDoctorProfile(@Path("doctorId") doctorId: Long): Response<Doctor>
 
@@ -61,12 +66,12 @@ interface Endpoint {
     companion object {
         private var INSTANCE: Endpoint? = null
         fun createInstance(): Endpoint {
-            if(INSTANCE ==null) {
-                INSTANCE = Retrofit.Builder().baseUrl("http://localhost:3000/")
+            if (INSTANCE == null) {
+                INSTANCE = Retrofit.Builder()
+                    .baseUrl(baseUrl)
                     .addConverterFactory(GsonConverterFactory.create())
-
-                    .build().
-                    create(Endpoint::class.java)
+                    .build()
+                    .create(Endpoint::class.java)
             }
             return INSTANCE!!
         }

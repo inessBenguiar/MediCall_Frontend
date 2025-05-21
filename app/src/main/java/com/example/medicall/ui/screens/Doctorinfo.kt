@@ -1,6 +1,6 @@
 package com.example.medicall.ui.screens
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.example.medicall.ui.components.DoctorDetails
 

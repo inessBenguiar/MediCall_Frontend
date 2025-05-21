@@ -58,6 +58,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.example.medicall.ui.preferences.readId
 import com.example.medicall.viewmodel.DoctorModel
 import kotlinx.coroutines.launch
 import java.io.File
@@ -84,7 +85,7 @@ data class WorkingDay(
 )
 
 data class UserInfo(
-    val id : Int = 26,
+    val id : Int,
     val specialty: String = "",
     val phoneNumber: String = "",
     val instagramUrl: String = "",
@@ -114,8 +115,9 @@ data class UserInfo(
 
 @Composable
 fun DoctorProfil(viewModel: DoctorModel, navController: NavController) {
-    var userInfo by remember { mutableStateOf(UserInfo()) }
     val context = LocalContext.current
+    var userInfo by remember { mutableStateOf(UserInfo(readId(context)!!.toInt())) }
+
     val scope = rememberCoroutineScope()
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
@@ -232,7 +234,8 @@ fun DoctorProfil(viewModel: DoctorModel, navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFE8F4FF))
             ) {
                 Column(
                     modifier = Modifier
@@ -369,6 +372,7 @@ fun DoctorProfil(viewModel: DoctorModel, navController: NavController) {
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
                 shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFE8F4FF)),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(
@@ -425,7 +429,8 @@ fun DoctorProfil(viewModel: DoctorModel, navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFE8F4FF))
             ) {
                 Column(
                     modifier = Modifier
@@ -593,7 +598,8 @@ fun DoctorProfil(viewModel: DoctorModel, navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFE8F4FF))
             ) {
                 Column(
                     modifier = Modifier

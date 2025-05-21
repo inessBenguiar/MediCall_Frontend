@@ -17,7 +17,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.medicall.Navigation.Screens
 import com.example.medicall.repository.RepositoryHolder
-import com.example.medicall.ui.Navigation.Screens.DoctorProfil
 import com.example.medicall.ui.components.AddPrescriptionForm
 import com.example.medicall.ui.components.AppointmentDetails
 import com.example.medicall.ui.components.DoctorProfil
@@ -30,6 +29,8 @@ import com.example.medicall.ui.screens.Login
 import com.example.medicall.ui.screens.Register
 import com.example.medicall.ui.theme.MedicallTheme
 import com.example.medicall.viewmodel.DoctorModel
+import android.content.pm.PackageManager
+
 import com.jakewharton.threetenabp.AndroidThreeTen
 
 class MainActivity : ComponentActivity() {
@@ -37,6 +38,11 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1001)
+            }
+        }
         AndroidThreeTen.init(this)
         enableEdgeToEdge()
         setContent {
@@ -54,8 +60,7 @@ class MainActivity : ComponentActivity() {
 fun AppNavigator() {
     val navController = rememberNavController()
     val context = LocalContext.current
-    val doctorModel = DoctorModel(RepositoryHolder.DoctorRepository, context)
-
+    val doctorModel = DoctorModel(RepositoryHolder.DoctorRepository, context )
     val start:String
     val userId = readId(context)
     val role = readRole(context)
@@ -88,6 +93,7 @@ fun AppNavigator() {
 
         composable(
             route = "home/{userId}"
+
         ) { backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId") ?: ""
             Home(navController, doctorModel, userId)
@@ -117,7 +123,7 @@ fun AppNavigator() {
             val doctorId = backStackEntry.arguments?.getString("doctorId")
             Booking(navController, doctorId!!.toInt())
         }
-        composable(route = com.example.medicall.ui.Navigation.Screens.DoctorProfil.route) {
+        composable(route = Screens.DoctorProfil.route) {
            DoctorProfil(doctorModel, navController)
         }
     }

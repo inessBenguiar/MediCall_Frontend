@@ -213,7 +213,7 @@ fun BookScreen(viewModel: AppointmentViewModel, navController: NavController,doc
             bookedDates = setOf("2025-05-15", "2025-05-11"), // Sample booked dates
             onDateSelected = { date ->
                 selectedDate = date
-                viewModel.fetchAvailableSlots(doctorId = 26, date = date) // Fetch slots for selected date
+                viewModel.fetchAvailableSlots(doctorId = doctorId, date = date) // Fetch slots for selected date
             }
         )
         selectedDate?.let {

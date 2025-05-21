@@ -4,8 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("com.google.devtools.ksp")
     kotlin("kapt")
-   // id("com.google.gms.google-services")
-
+    id("com.google.gms.google-services")
 
 
 }
@@ -46,6 +45,10 @@ android {
 }
 
 dependencies {
+    implementation ("com.google.android.gms:play-services-auth:20.5.0")
+    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
+    implementation ("com.google.firebase:firebase-messaging")
+
     implementation ("androidx.navigation:navigation-compose:2.4.0")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
     implementation ("com.google.android.gms:play-services-auth:20.5.0")
@@ -58,11 +61,17 @@ dependencies {
     implementation ("com.google.code.gson:gson:2.8.5")
     // Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
+
     // navigation
     implementation ("androidx.navigation:navigation-compose:2.8.3")
+
     //MockWebserver
     androidTestImplementation("com.squareup.okhttp3:mockwebserver:4.9.1")
-    //
+
+    //couroutines
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
     implementation("com.squareup.moshi:moshi:1.15.0")
 
     implementation("com.squareup.moshi:moshi-kotlin:1.15.0")

@@ -29,6 +29,7 @@ data class Doctor(
     @SerializedName("photo")
     val photo: String,
     val contact: String,
+    val phone: String,
     val experience: Int,
     val address: String,
    /* val facebook: String? = null,
