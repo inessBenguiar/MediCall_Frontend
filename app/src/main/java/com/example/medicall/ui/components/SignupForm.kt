@@ -51,11 +51,11 @@ fun SignupForm(navController: NavController) {
     ) {
         Spacer(modifier = Modifier.height(40.dp))
 
-     /*   Image(
-            painter = painterResource(id = R.drawable.logo),
-            contentDescription = "Logo",
-            modifier = Modifier.size(100.dp)
-        )*/
+        /*   Image(
+               painter = painterResource(id = R.drawable.logo),
+               contentDescription = "Logo",
+               modifier = Modifier.size(100.dp)
+           )*/
 
         Spacer(modifier = Modifier.height(16.dp))
 

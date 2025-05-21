@@ -31,6 +31,7 @@ import com.example.medicall.Navigation.Screens
 @Composable
 fun DoctorsList(doctorModel: DoctorModel, navController: NavController) {
     val context = LocalContext.current
+
     val data = doctorModel.doctors.value
     val loading = doctorModel.loading.value
     val error = doctorModel.error.value
@@ -77,7 +78,7 @@ fun DoctorsList(doctorModel: DoctorModel, navController: NavController) {
                         first_name = doctor.first_name,
                         family_name = doctor.family_name,
                         specialty = doctor.specialty,
-                        address = doctor.clinic,
+                        address = doctor.address,
                         phone = doctor.contact,
                         photoUrl = doctor.photo,
                         onClick = {
@@ -86,7 +87,7 @@ fun DoctorsList(doctorModel: DoctorModel, navController: NavController) {
                                         "?firstName=${doctor.first_name}" +
                                         "&familyName=${doctor.family_name}" +
                                         "&photoUrl=${doctor.photo}" +
-                                        "&address=${doctor.clinic}" +
+                                        "&address=${doctor.address}" +
                                         "&phone=${doctor.contact}"
                             )
                         }
