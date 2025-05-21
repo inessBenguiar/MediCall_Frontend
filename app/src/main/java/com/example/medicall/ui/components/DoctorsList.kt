@@ -79,7 +79,7 @@ fun DoctorsList(doctorModel: DoctorModel, navController: NavController) {
                         family_name = doctor.family_name,
                         specialty = doctor.specialty,
                         address = doctor.address,
-                        phone = doctor.contact,
+                        phone = doctor.phone,
                         photoUrl = doctor.photo,
                         onClick = {
                             navController.navigate(
@@ -88,7 +88,7 @@ fun DoctorsList(doctorModel: DoctorModel, navController: NavController) {
                                         "&familyName=${doctor.family_name}" +
                                         "&photoUrl=${doctor.photo}" +
                                         "&address=${doctor.address}" +
-                                        "&phone=${doctor.contact}"
+                                        "&phone=${doctor.phone}"
                             )
                         }
                     )
