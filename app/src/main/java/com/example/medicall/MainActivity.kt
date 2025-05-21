@@ -28,6 +28,9 @@ import com.example.medicall.ui.screens.Login
 import com.example.medicall.ui.screens.Register
 import com.example.medicall.ui.theme.MedicallTheme
 import com.example.medicall.viewmodel.DoctorModel
+import com.example.medicall.ui.screens.Appointments
+
+
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -106,5 +109,20 @@ fun AppNavigator() {
         composable(route = com.example.medicall.ui.Navigation.Screens.Booking.route) {
             Booking()
         }
+
+
+        composable(
+            route = "PatientQRCode/{appointmentId}",
+            arguments = listOf(navArgument("appointmentId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val appointmentId = backStackEntry.arguments?.getString("appointmentId") ?: ""
+            com.example.medicall.ui.screens.PatientQRCodeScreen(appointmentId = appointmentId)
+        }
+
+        composable("appointments") {
+            Appointments(navController = navController)
+        }
+
+
     }
 }

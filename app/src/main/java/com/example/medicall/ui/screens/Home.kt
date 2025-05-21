@@ -55,9 +55,17 @@ fun Home(navController: NavController, doctorModel: DoctorModel, userId: String)
         bottomBar = {
             Navbar(selectedItem) { newIndex ->
                 selectedItem = newIndex
+                // Navigate when "Calendrier" tab is selected
+                when (newIndex) {
+                    2 -> { // Assuming "Calendrier" is at index 2 in navItems
+                        navController.navigate("appointments") // or your calendar screen route
+                    }
+                    // You can handle other tab navigations here if needed
+                }
             }
         }
-    ) { innerPadding ->
+    )
+ { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
