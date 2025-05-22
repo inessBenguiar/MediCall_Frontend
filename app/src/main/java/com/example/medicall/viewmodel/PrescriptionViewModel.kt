@@ -29,6 +29,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
+
 class PrescriptionViewModel(
     private val localRepository: PrescriptionRepository,
     val doctorId: Long,
@@ -141,14 +142,12 @@ class PrescriptionViewModel(
                 if (id != null) {
                     localRepository.markAsUnsynced(id)
 
-                    // If network is available, try to sync the updated prescription immediately
-                    if (connectivityManager?.isNetworkAvailable() == true && apiService != null) {
+                     if (connectivityManager?.isNetworkAvailable() == true && apiService != null) {
                         try {
                             syncEditedPrescription(id, patientName, diagnosis, instructions, medications)
                         } catch (e: Exception) {
                             Log.e(TAG, "Failed to sync updated prescription: ${e.message}", e)
-                            // We already marked it as unsynced, so it will be synced later
-                        }
+                             }
                     }
                 }
                 _error.value = null
@@ -176,7 +175,6 @@ class PrescriptionViewModel(
         try {
             _syncStatus.value = "Synchronisation en cours..."
 
-            // Get existing prescription to check if it has a remoteId
             val existingPrescription = localRepository.getById(id)
             if (existingPrescription == null || existingPrescription.prescription.remoteId == null) {
                 Log.d(TAG, "No remote ID found for prescription $id, skipping remote update")
@@ -185,7 +183,6 @@ class PrescriptionViewModel(
 
             val remoteId = existingPrescription.prescription.remoteId
 
-            // Create DTO
             val medicationDtos = medications.map { med ->
                 MedicationDto(
                     name = med.name,
@@ -204,10 +201,8 @@ class PrescriptionViewModel(
                 medications = medicationDtos
             )
 
-            // Update on server
             val result = apiService.updatePrescription(remoteId, prescriptionDto)
 
-            // Mark as synced locally
             localRepository.markAsSynced(id, result.id)
             _syncStatus.value = "Synchronisation terminée"
 
@@ -253,10 +248,9 @@ class PrescriptionViewModel(
                 _isLoading.value = true
                 _syncStatus.value = "Suppression en cours..."
 
-                // Delete locally first
+
                 localRepository.delete(prescription)
 
-                // If network is available and prescription has remoteId, try to delete remotely
                 if (connectivityManager?.isNetworkAvailable() == true && apiService != null && prescription.remoteId != null) {
                     try {
                         apiService.deletePrescription(prescription.remoteId)
@@ -274,7 +268,7 @@ class PrescriptionViewModel(
 
                 _isLoading.value = false
 
-                // Delay to show the status message
+
                 kotlinx.coroutines.delay(3000)
                 _syncStatus.value = null
             } catch (e: Exception) {
@@ -318,13 +312,12 @@ class PrescriptionViewModel(
                 _pdfDownloadStatus.value = "Téléchargement du PDF..."
                 _error.value = null
 
-                // Get prescription details for better file naming
                 val prescription = localRepository.getById(id)?.prescription
                 val fileName = buildPdfFileName(prescription, id)
 
                 val responseBody = apiService.downloadPrescriptionPdf(id)
 
-                // Save the PDF file
+
                 val success = savePdfToStorage(context, responseBody, fileName)
 
                 if (success) {
@@ -335,7 +328,7 @@ class PrescriptionViewModel(
 
                 _isPdfLoading.value = false
 
-                // Clear status after a delay
+
                 kotlinx.coroutines.delay(3000)
                 _pdfDownloadStatus.value = null
 
@@ -344,7 +337,7 @@ class PrescriptionViewModel(
                 _error.value = "Échec du téléchargement: ${e.message}"
                 _isPdfLoading.value = false
 
-                // Clear status after a delay
+
                 kotlinx.coroutines.delay(3000)
                 _pdfDownloadStatus.value = null
             }
@@ -365,10 +358,8 @@ class PrescriptionViewModel(
     private fun savePdfToStorage(context: Context, responseBody: ResponseBody, fileName: String): Boolean {
         return try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                // For Android 10 (API 29) and above, use MediaStore
                 saveFileUsingMediaStore(context, responseBody, fileName)
             } else {
-                // For older Android versions
                 saveFileToExternalStorage(responseBody, fileName)
             }
         } catch (e: Exception) {
@@ -384,14 +375,12 @@ class PrescriptionViewModel(
             put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
             put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
 
-            // Use the Downloads directory without depending on Downloads.EXTERNAL_CONTENT_URI
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
                 put(MediaStore.MediaColumns.IS_PENDING, 1)
             }
         }
 
-        // Use the correct content URI based on API level
         val contentUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
         } else {

@@ -32,7 +32,6 @@ class PrescriptionSyncWorker(
         )
 
         return try {
-            // Run in blocking mode since Worker doesn't support coroutines directly
             runBlocking {
                 syncManager.syncPrescriptions()
             }

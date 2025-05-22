@@ -27,7 +27,6 @@ class PrescriptionSyncManager(
     private val TAG = "PrescriptionSyncManager"
 
     suspend fun syncPrescriptions() {
-        // Check if internet is available
         if (!connectivityManager.isNetworkAvailable()) {
             Log.d(TAG, "Network not available, skipping sync")
             return
@@ -60,7 +59,7 @@ class PrescriptionSyncManager(
                                 CreatePrescriptionDto(
                                     patientId = localPrescription.patientId,
                                     doctorId = localPrescription.doctorId,
-                                    appointment_id = 41L,
+                                    appointment_id = 1L,
                                     diagnosis = localPrescription.diagnosis ?: "",
                                     instructions = localPrescription.instructions ?: "",
                                     medications = localPrescription.medications.map { med ->
@@ -77,13 +76,12 @@ class PrescriptionSyncManager(
                             Log.d(TAG, "Successfully synced prescription ${localPrescription.id} with remote ID ${remotePrescription.id}")
                             localRepository.markAsSynced(localPrescription.id, remotePrescription.id)
                         } catch (e: HttpException) {
-                            // Special handling for 404 errors
                             if (e.code() == 404) {
                                 Log.e(TAG, "API endpoint not found (404). Check that your backend API is properly configured.")
                                 localRepository.markAsSynced(localPrescription.id, System.currentTimeMillis())
                                 Log.w(TAG, "DEV MODE: Marking prescription as synced despite failure")
                             } else {
-                                throw e  // Re-throw other HTTP errors
+                                throw e
                             }
                         }
                     } catch (e: Exception) {

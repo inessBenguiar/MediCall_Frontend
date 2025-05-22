@@ -5,10 +5,6 @@ import android.net.NetworkCapabilities
 import android.os.Build
 class ConnectivityManager(private val context: Context) {
 
-    /**
-     * Checks if the device has an active network connection
-     * @return true if network is available, false otherwise
-     */
     fun isNetworkAvailable(): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 

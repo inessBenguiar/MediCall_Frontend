@@ -75,7 +75,7 @@ fun PrescriptionDetailScreen(
                     }
                 },
                 actions = {
-                    // PDF Download button
+
                     IconButton(
                         onClick = {
                             scope.launch {
@@ -97,7 +97,7 @@ fun PrescriptionDetailScreen(
                         }
                     }
 
-                    // Edit button
+
                     IconButton(
                         onClick = {
                             onEdit(prescriptionId)
@@ -146,7 +146,7 @@ fun PrescriptionDetailScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // Loading state
+
             if (isLoading) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -155,7 +155,7 @@ fun PrescriptionDetailScreen(
                     CircularProgressIndicator(color = primaryBlue)
                 }
             }
-            // Error state
+
             else if (error != null) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -180,7 +180,6 @@ fun PrescriptionDetailScreen(
                     }
                 }
             }
-            // Content when prescription is loaded
             else if (currentPrescription != null) {
                 val prescription = currentPrescription!!.prescription
                 val medications = currentPrescription!!.medications
@@ -191,7 +190,7 @@ fun PrescriptionDetailScreen(
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // Patient information section
+
                     item {
                         Card(
                             modifier = Modifier.fillMaxWidth(),
@@ -206,7 +205,7 @@ fun PrescriptionDetailScreen(
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    // Avatar with first letter
+
                                     Box(
                                         modifier = Modifier
                                             .size(60.dp)
@@ -261,7 +260,6 @@ fun PrescriptionDetailScreen(
                         }
                     }
 
-                    // Diagnosis section
                     item {
                         Card(
                             modifier = Modifier.fillMaxWidth(),
@@ -290,7 +288,6 @@ fun PrescriptionDetailScreen(
                         }
                     }
 
-                    // General instructions section
                     item {
                         Card(
                             modifier = Modifier.fillMaxWidth(),
@@ -319,7 +316,6 @@ fun PrescriptionDetailScreen(
                         }
                     }
 
-                    // Medications section
                     item {
                         Text(
                             text = "Médicaments (${medications.size})",
@@ -329,18 +325,16 @@ fun PrescriptionDetailScreen(
                         )
                     }
 
-                    // List of medications
                     items(medications) { medication ->
                         MedicationCard(medication, primaryBlue)
                     }
 
-                    // Bottom padding
+
                     item {
                         Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
             }
-            // No prescription loaded
             else {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -389,7 +383,7 @@ fun MedicationCard(medication: Medication, primaryColor: Color) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Medication details
+
             val details = listOf(
                 "Dosage" to medication.dosage,
                 "Fréquence" to medication.frequency,
@@ -415,7 +409,6 @@ fun MedicationCard(medication: Medication, primaryColor: Color) {
                 }
             }
 
-            // Special instructions if any
             medication.specialInstructions?.let {
                 if (it.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(8.dp))

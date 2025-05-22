@@ -10,12 +10,12 @@ import com.example.medicall.entity.local.PrescriptionDao
 import com.example.medicall.entity.local.PrescriptionWithMedications
 import kotlinx.coroutines.flow.Flow
 
+
 class PrescriptionRepository(
     private val prescriptionDao: PrescriptionDao,
     private val medicationDao: MedicationDao
 ) {
     fun getByDoctor(doctorId: String): Flow<List<PrescriptionWithMedications>> {
-        // Convert doctorId from String to Long to match the function signature in PrescriptionDao
         return prescriptionDao.getByDoctorWithMedications(doctorId.toLong())
     }
 
@@ -35,18 +35,14 @@ class PrescriptionRepository(
 
     suspend fun update(prescription: Prescription, medications: List<Medication>) {
         prescriptionDao.update(prescription)
-        // Delete old medications
         medicationDao.deleteByPrescription(prescription.id)
-        // Add new medications
-        medications.forEach { medication ->
+       medications.forEach { medication ->
             medicationDao.insert(medication.copy(prescriptionId = prescription.id))
         }
     }
 
     suspend fun delete(prescription: Prescription) {
-        // First delete associated medications
         medicationDao.deleteByPrescription(prescription.id)
-        // Then delete the prescription
         prescriptionDao.delete(prescription)
     }
 
@@ -64,10 +60,8 @@ class PrescriptionRepository(
         }
     }
 
-    // Make this function public so it can be used by the ViewModel
     fun getPatientIdFromName(patientName: String): Long {
-        // In a real app, this would query a patient database
-        // This is just a placeholder
+
         return 1L
     }
 

@@ -1,6 +1,17 @@
 package com.example.medicall.ui.screens
+
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,8 +21,29 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,24 +66,20 @@ fun AddEditPrescriptionScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // State for prescription details
-    var patientName by remember { mutableStateOf("") }
+     var patientName by remember { mutableStateOf("") }
     var patientAge by remember { mutableStateOf("") }
     var diagnosis by remember { mutableStateOf("") }
     var instructionsText by remember { mutableStateOf("") }
 
-    // State for medications
     var medications by remember { mutableStateOf<List<Medication>>(emptyList()) }
     var showMedicationForm by remember { mutableStateOf(false) }
 
-    // State for temporary medication form
     var medicationName by remember { mutableStateOf("") }
     var dosage by remember { mutableStateOf("") }
     var frequency by remember { mutableStateOf("") }
     var duration by remember { mutableStateOf("14 jours") }
     var medicationInstructions by remember { mutableStateOf("") }
 
-    // Collect state from ViewModel
     val currentPrescription by viewModel.currentPrescription.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
@@ -60,14 +88,10 @@ fun AddEditPrescriptionScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scrollState = rememberScrollState()
 
-    // Primary blue color to match the image
-    val primaryBlue = Color(0xFF1976D2)
+   val primaryBlue = Color(0xFF1976D2)
 
-    // Load existing data in edit mode
     LaunchedEffect(prescriptionId) {
-        // Clear the form data when editing a new prescription
-        if (prescriptionId != currentPrescription?.prescription?.id) {
-            // Reset current form data
+       if (prescriptionId != currentPrescription?.prescription?.id) {
             patientName = ""
             patientAge = ""
             diagnosis = ""
@@ -75,16 +99,14 @@ fun AddEditPrescriptionScreen(
             medications = emptyList()
 
             prescriptionId?.let { id ->
-                // Load prescription data
                 viewModel.getPrescription(id)
             }
         }
     }
 
-    // Fill the form when prescription data is loaded
     LaunchedEffect(currentPrescription) {
         currentPrescription?.let { prescriptionWithMeds ->
-            // Only update if IDs match
+
             if (prescriptionId == prescriptionWithMeds.prescription.id) {
                 patientName = prescriptionWithMeds.prescription.patientName
                 patientAge = prescriptionWithMeds.prescription.patientAge?.toString() ?: ""
@@ -95,7 +117,6 @@ fun AddEditPrescriptionScreen(
         }
     }
 
-    // Function to add a medication to the list
     fun addMedication() {
         if (medicationName.isBlank() || dosage.isBlank() || frequency.isBlank()) {
             coroutineScope.launch {
@@ -105,7 +126,7 @@ fun AddEditPrescriptionScreen(
         }
 
         val newMedication = Medication(
-            id = 0L, // This will be generated by Room
+            id = 0L,
             name = medicationName,
             dosage = dosage,
             frequency = frequency,
@@ -116,7 +137,7 @@ fun AddEditPrescriptionScreen(
 
         medications = medications + newMedication
 
-        // Clear the form and hide it
+
         medicationName = ""
         dosage = ""
         frequency = ""
@@ -125,8 +146,7 @@ fun AddEditPrescriptionScreen(
         showMedicationForm = false
     }
 
-    // Function to remove a medication from the list
-    fun removeMedication(medication: Medication) {
+   fun removeMedication(medication: Medication) {
         medications = medications.filter { it != medication }
     }
 
@@ -148,7 +168,6 @@ fun AddEditPrescriptionScreen(
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // App icon and title
                 Box(
                     modifier = Modifier
                         .size(72.dp)
@@ -182,7 +201,6 @@ fun AddEditPrescriptionScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Patient Information Fields
                 Text(
                     text = "Nom du Patient*",
                     fontSize = 14.sp,
@@ -275,8 +293,7 @@ fun AddEditPrescriptionScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Medications Section
-                Text(
+               Text(
                     text = "Médicaments",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
@@ -285,7 +302,6 @@ fun AddEditPrescriptionScreen(
                         .padding(bottom = 8.dp)
                 )
 
-                // List of medications
                 if (medications.isEmpty()) {
                     Box(
                         modifier = Modifier
@@ -361,7 +377,6 @@ fun AddEditPrescriptionScreen(
                     }
                 }
 
-                // Add medication button
                 if (!showMedicationForm) {
                     Button(
                         onClick = { showMedicationForm = true },
@@ -383,8 +398,7 @@ fun AddEditPrescriptionScreen(
                     }
                 }
 
-                // Medication form
-                if (showMedicationForm) {
+               if (showMedicationForm) {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -552,7 +566,6 @@ fun AddEditPrescriptionScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Submit button
                 Button(
                     onClick = {
                         if (patientName.isBlank()) {
@@ -570,11 +583,11 @@ fun AddEditPrescriptionScreen(
                         }
 
                         coroutineScope.launch {
-                            // Format the date to a string
+
                             val dateString = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                                 .format(Date())
 
-                            // Save prescription with all medications
+
                             viewModel.savePrescription(
                                 id = prescriptionId,
                                 patientName = patientName,
@@ -585,7 +598,7 @@ fun AddEditPrescriptionScreen(
                                 patientAge = patientAge
                             )
 
-                            // Clear current prescription before navigating back
+
                             viewModel.clearCurrentPrescription()
                             onBack()
                         }
@@ -606,7 +619,7 @@ fun AddEditPrescriptionScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Back button (as text link)
+
                 TextButton(
                     onClick = {
                         viewModel.clearCurrentPrescription()
@@ -622,7 +635,7 @@ fun AddEditPrescriptionScreen(
             }
         }
 
-        // Snackbar for errors/notifications
+
         SnackbarHost(
             hostState = snackbarHostState,
             modifier = Modifier

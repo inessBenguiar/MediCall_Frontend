@@ -22,7 +22,6 @@ class PrescriptionApiServiceImpl(
             Log.d(TAG, "Attempting to get all prescriptions")
             return apiClient.service.getAllPrescriptions()
         } catch (e: HttpException) {
-            // Handle HTTP errors
             Log.e(TAG, "HTTP error when getting all prescriptions: ${e.code()}", e)
             return emptyList()
         } catch (e: Exception) {
@@ -87,7 +86,6 @@ class PrescriptionApiServiceImpl(
             Log.d(TAG, "Attempting to download PDF for prescription: $id")
             return apiClient.service.downloadPrescriptionPdf(id)
         } catch (e: HttpException) {
-            // Handle HTTP errors
             Log.e(TAG, "HTTP error when downloading prescription PDF: ${e.code()}", e)
             throw e
         } catch (e: Exception) {
@@ -104,7 +102,6 @@ class PrescriptionApiServiceImpl(
             Log.d(TAG, "Attempting to update prescription on backend: $id")
             return apiClient.service.updatePrescription(id, prescriptionDto)
         } catch (e: HttpException) {
-            // More detailed logging for HTTP errors
             Log.e(TAG, "HTTP error when updating prescription: ${e.code()}", e)
             Log.w(TAG, "Returning mock response for development purposes")
             return PrescriptionDto(
@@ -146,8 +143,7 @@ class PrescriptionApiServiceImpl(
             Log.d(TAG, "Attempting to get prescriptions for doctor: $doctorId")
             return apiClient.service.getPrescriptionsByDoctor(doctorId)
         } catch (e: HttpException) {
-            // Handle HTTP errors
-            Log.e(TAG, "HTTP error when getting prescriptions: ${e.code()}", e)
+           Log.e(TAG, "HTTP error when getting prescriptions: ${e.code()}", e)
             return emptyList()
         } catch (e: Exception) {
             Log.e(TAG, "Error getting prescriptions: ${e.message}", e)
@@ -164,7 +160,6 @@ class PrescriptionApiServiceImpl(
             Log.d(TAG, "Attempting to get prescription with id: $id")
             return apiClient.service.getPrescriptionById(id)
         } catch (e: HttpException) {
-            // Handle HTTP errors
             Log.e(TAG, "HTTP error when getting prescription by id: ${e.code()}", e)
             throw e
         } catch (e: Exception) {
@@ -182,7 +177,6 @@ class PrescriptionApiServiceImpl(
             Log.d(TAG, "Attempting to get prescriptions for appointment: $appointmentId")
             return apiClient.service.getPrescriptionsByAppointment(appointmentId)
         } catch (e: HttpException) {
-            // Handle HTTP errors
             Log.e(TAG, "HTTP error when getting prescriptions by appointment: ${e.code()}", e)
             return emptyList()
         } catch (e: Exception) {
@@ -200,7 +194,6 @@ class PrescriptionApiServiceImpl(
             Log.d(TAG, "Attempting to delete prescription with id: $id")
             apiClient.service.deletePrescription(id)
         } catch (e: HttpException) {
-            // Handle HTTP errors
             Log.e(TAG, "HTTP error when deleting prescription: ${e.code()}", e)
             throw e
         } catch (e: Exception) {
@@ -218,7 +211,6 @@ class PrescriptionApiServiceImpl(
             Log.d(TAG, "Attempting to delete medication $medicationId from prescription $prescriptionId")
             apiClient.service.deleteMedicationFromPrescription(prescriptionId, medicationId)
         } catch (e: HttpException) {
-            // Handle HTTP errors
             Log.e(TAG, "HTTP error when deleting medication from prescription: ${e.code()}", e)
             throw e
         } catch (e: Exception) {
