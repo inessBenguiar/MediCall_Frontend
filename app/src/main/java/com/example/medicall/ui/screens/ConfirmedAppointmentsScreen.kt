@@ -179,7 +179,7 @@ fun UpcomingAppointments(
                     // TODO: Implement reschedule logic
                 },
                 onQrCodeClick = {
-                    navController.navigate("qr_code/${appointment.date}-${appointment.time}")
+                    navController.navigate("qr_code_screen/${appointment.id}")
                 }
             )
         }
@@ -222,28 +222,39 @@ fun AppointmentCard(
         elevation = CardDefaults.cardElevation(6.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "${appointment.date} - ${appointment.time}",
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 14.sp
-                )
-                Icon(
-                    painter = painterResource(id = R.drawable.qricon1),
-                    contentDescription = "QR Code",
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clickable { onQrCodeClick() },
-                    tint = Color.Black
-                )
+        if (appointment != null) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "${appointment.date} - ${appointment.time}",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 14.sp
+                    )
+                    Icon(
+                        painter = painterResource(id = R.drawable.qricon1),
+                        contentDescription = "QR Code",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable { onQrCodeClick() },
+                        tint = Color.Black
+                    )
+                }
             }
+        } else {
+            Text(
+                text = "Loading appointment...",
+                modifier = Modifier.padding(16.dp),
+                color = Color.Gray
+            )
+        }
 
-            Divider(
+
+
+        Divider(
                 color = Color(0xFFE5E7EB),
                 thickness = 0.5.dp,
                 modifier = Modifier.padding(vertical = 8.dp)
@@ -301,5 +312,6 @@ fun AppointmentCard(
                 }
             }
         }
+
     }
-}
+
