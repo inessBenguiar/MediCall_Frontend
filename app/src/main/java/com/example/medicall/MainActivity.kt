@@ -27,6 +27,7 @@ import com.example.medicall.ui.screens.DoctorHome
 import com.example.medicall.ui.screens.DoctorInfo
 import com.example.medicall.ui.screens.Home
 import com.example.medicall.ui.screens.Login
+import com.example.medicall.ui.screens.QrCodeScreen
 import com.example.medicall.ui.screens.Register
 import com.example.medicall.ui.theme.MedicallTheme
 import com.example.medicall.viewmodel.AppointmentViewModel
@@ -127,6 +128,14 @@ fun AppNavigator() {
                     viewModel = appointmentViewModel
                 )
             }
+        }
+
+        composable(
+            route = "qr_code_screen/{appointmentId}",
+            arguments = listOf(navArgument("appointmentId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val appointmentId = backStackEntry.arguments?.getInt("appointmentId") ?: 0
+            QrCodeScreen(appointmentId = appointmentId, navController = navController)
         }
 
 

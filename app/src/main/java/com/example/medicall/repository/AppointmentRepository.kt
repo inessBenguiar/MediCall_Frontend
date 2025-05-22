@@ -15,6 +15,7 @@ interface AppointmentRepository {
 
     // New function to get confirmed appointments
     suspend fun getConfirmedAppointments(patientId: Int): Result<List<ConfirmedAppointment>>
+    suspend fun getAppointmentById(id: Int): Result<ConfirmedAppointment>
 }
 
 class AppointmentRepositoryImpl(
@@ -60,4 +61,20 @@ class AppointmentRepositoryImpl(
                 Result.failure(e)
             }
         }
+
+    override suspend fun getAppointmentById(id: Int): Result<ConfirmedAppointment> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiService.getAppointmentById(id)
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    return@withContext Result.success(it) // <-- return here
+                } ?: return@withContext Result.failure(Exception("Empty response body"))
+            } else {
+                return@withContext Result.failure(Exception("Failed to fetch appointment: ${response.message()}"))
+            }
+        } catch (e: Exception) {
+            return@withContext Result.failure(e)
+        }
+    }
+
 }

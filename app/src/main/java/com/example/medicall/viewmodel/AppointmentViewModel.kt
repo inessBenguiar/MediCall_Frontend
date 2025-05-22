@@ -8,6 +8,7 @@ import com.example.medicall.entity.ConfirmedAppointment
 import com.example.medicall.repository.AppointmentRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class AppointmentViewModel(
@@ -60,6 +61,28 @@ class AppointmentViewModel(
             }.onFailure { exception ->
                 _confirmedAppointments.value = emptyList()
                 _confirmedAppointmentsError.value = exception.message
+            }
+        }
+
+
+    }
+
+
+    private val _appointment = MutableStateFlow<ConfirmedAppointment?>(null)
+    val appointment: StateFlow<ConfirmedAppointment?> = _appointment.asStateFlow()
+
+    private val _appointmentError = MutableStateFlow<String?>(null)
+    val appointmentError: StateFlow<String?> = _appointmentError.asStateFlow()
+
+    fun fetchAppointment(id: Int) {
+        viewModelScope.launch {
+            val result = appointmentRepository.getAppointmentById(id)
+            result.onSuccess { appointment ->
+                _appointment.value = appointment
+                _appointmentError.value = null
+            }.onFailure { exception ->
+                _appointment.value = null
+                _appointmentError.value = exception.message
             }
         }
     }

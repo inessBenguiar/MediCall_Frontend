@@ -10,5 +10,6 @@ data class ConfirmedAppointment(
     val created_at: String,
     val first_name: String?,
     val family_name: String?,
-    val phone: String?
+    val phone: String?,
+    val qrCodeImage: String? // ← Add this line
 )

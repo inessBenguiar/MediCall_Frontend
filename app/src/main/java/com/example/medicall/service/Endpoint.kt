@@ -82,6 +82,10 @@ interface Endpoint {
         @GET("appointments/patient/{patientId}/confirmed")
         suspend fun getConfirmedAppointments(@Path("patientId") patientId: Int): List<ConfirmedAppointment>
 
+    @GET("appointments/{id}")
+    suspend fun getAppointmentById(@Path("id") id: Int): Response<ConfirmedAppointment>
+
+
 
 
     companion object {

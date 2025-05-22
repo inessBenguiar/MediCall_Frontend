@@ -54,6 +54,7 @@ fun ConfirmedAppointmentsScreen(
     // Map ConfirmedAppointment to AppointmentData using only available fields
     val appointmentDataList = appointments.map { appt ->
         AppointmentData(
+            id = appt.id,
             doctorImage = doctorImage,
             doctorName = "Dr. ${appt.first_name ?: ""} ${appt.family_name ?: ""}".trim(),
             date = appt.date_time.split("T").getOrNull(0) ?: appt.date_time,
@@ -64,7 +65,7 @@ fun ConfirmedAppointmentsScreen(
     Scaffold(
         bottomBar = {
             if (!isLandscape || !isTablet) {
-                // Place bottom navigation if needed
+                // Optional bottom navigation here if needed
             }
         }
     ) { paddingValues ->
@@ -154,6 +155,7 @@ fun ConfirmedAppointmentsScreen(
 }
 
 data class AppointmentData(
+    val id: Int,
     val doctorImage: Painter,
     val doctorName: String,
     val date: String,
@@ -168,15 +170,13 @@ fun UpcomingAppointments(
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(appointmentList) { appointment ->
             AppointmentCard(
-                doctorImage = appointment.doctorImage,
-                doctorName = appointment.doctorName,
-                date = appointment.date,
-                time = appointment.time,
+                appointment = appointment,
+                navController = navController,
                 onCancel = {
-                    // TODO: cancel logic here
+                    // TODO: Implement cancel logic
                 },
                 onReschedule = {
-                    // TODO: reschedule logic here
+                    // TODO: Implement reschedule logic
                 },
                 onQrCodeClick = {
                     navController.navigate("qr_code/${appointment.date}-${appointment.time}")
@@ -208,10 +208,8 @@ fun CanceledAppointments() {
 
 @Composable
 fun AppointmentCard(
-    doctorImage: Painter,
-    doctorName: String,
-    date: String,
-    time: String,
+    appointment: AppointmentData,
+    navController: NavController,
     onCancel: () -> Unit,
     onReschedule: () -> Unit,
     onQrCodeClick: () -> Unit
@@ -227,9 +225,14 @@ fun AppointmentCard(
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("$date - $time", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                Text(
+                    text = "${appointment.date} - ${appointment.time}",
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp
+                )
                 Icon(
                     painter = painterResource(id = R.drawable.qricon1),
                     contentDescription = "QR Code",
@@ -248,7 +251,7 @@ fun AppointmentCard(
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
-                    painter = doctorImage,
+                    painter = appointment.doctorImage,
                     contentDescription = "Doctor Image",
                     modifier = Modifier
                         .size(100.dp)
@@ -256,8 +259,11 @@ fun AppointmentCard(
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
-                    Text(doctorName, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    // Removed specialty, clinic, location since not in data model
+                    Text(
+                        text = appointment.doctorName,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
                 }
             }
 
