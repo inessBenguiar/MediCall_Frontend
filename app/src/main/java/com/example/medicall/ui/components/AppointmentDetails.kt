@@ -257,7 +257,11 @@ fun AppointmentDetails(navController: NavController, appointmentId: Int) {
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Button(
-                        onClick = { /* TODO: Handle Add Prescription */ },
+                        onClick = {
+                            // Navigate to AddEditPrescriptionScreen with patient name
+                            val patientName = "${appt.first_name} ${appt.family_name}"
+                            navController.navigate("addEditPrescription?patientName=${patientName}&appointmentId=${appointmentId}")
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(containerColor = primaryColor),
                         shape = RoundedCornerShape(8.dp)
@@ -265,7 +269,7 @@ fun AppointmentDetails(navController: NavController, appointmentId: Int) {
                         Text("Add prescription", color = Color.White, fontWeight = FontWeight.Medium, modifier = Modifier.padding(vertical = 4.dp))
                     }
                 }
-            } ?: run {
+            }  ?: run {
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,

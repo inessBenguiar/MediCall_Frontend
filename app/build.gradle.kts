@@ -54,9 +54,9 @@ dependencies {
     implementation ("com.google.android.gms:play-services-auth:20.5.0")
 
     //Retrofit
-    implementation("com.squareup.retrofit2:retrofit:2.6.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.6.0")
     implementation ("com.google.code.gson:gson:2.8.5")
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
     // Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
 
@@ -96,4 +96,32 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    //
+    implementation(libs.material3)
+    implementation("androidx.compose.material3:material3-window-size-class:1.2.0")
+
+
+
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+
+
+    // Lifecycle & ViewModel
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.runtime.livedata)
+
+    // Material (for backward compatibility)
+    implementation(libs.androidx.material)
+
+    // Coroutines
+
+    // Koin
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+
+    // WorkManager
+    implementation(libs.androidx.work.runtime.ktx)
+
+
 }

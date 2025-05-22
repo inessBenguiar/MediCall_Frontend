@@ -68,7 +68,7 @@ fun AppNavigator() {
 
     NavHost(navController = navController, startDestination = start) {
         composable(Screens.MainScreen.route) {
-           Login(navController)
+            Login(navController)
         }
 
         composable(
@@ -107,10 +107,11 @@ fun AppNavigator() {
         ) {
             DoctorInfo(navController)
         }
-       composable("appointmentDetails/{appointmentId}") { backStackEntry ->
+        composable("appointmentDetails/{appointmentId}") { backStackEntry ->
             val appointmentId = backStackEntry.arguments?.getString("appointmentId")?.toIntOrNull() ?: 0
             AppointmentDetails(navController = navController, appointmentId = appointmentId)
         }
+
         composable(route = com.example.medicall.ui.Navigation.Screens.Booking.route) {
             Booking()
         }
