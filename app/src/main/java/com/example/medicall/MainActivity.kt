@@ -123,10 +123,12 @@ fun AppNavigator() {
             if (pid >= 0) {
                 ConfirmedAppointmentsScreen(
                     patientId = pid,
+                    navController = navController,    // <-- pass navController here
                     viewModel = appointmentViewModel
                 )
             }
         }
+
 
 
 
