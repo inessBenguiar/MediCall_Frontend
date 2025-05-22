@@ -104,10 +104,11 @@ fun AppNavigator() {
                 navArgument("address") { type = NavType.StringType; nullable = true },
                 navArgument("phone") { type = NavType.StringType; nullable = true }
             )
-        ) {
-            DoctorInfo(navController)
+        ) { backStackEntry ->
+            DoctorInfo(navController, backStackEntry)
         }
-       composable("appointmentDetails/{appointmentId}") { backStackEntry ->
+
+        composable("appointmentDetails/{appointmentId}") { backStackEntry ->
             val appointmentId = backStackEntry.arguments?.getString("appointmentId")?.toIntOrNull() ?: 0
             AppointmentDetails(navController = navController, appointmentId = appointmentId)
         }

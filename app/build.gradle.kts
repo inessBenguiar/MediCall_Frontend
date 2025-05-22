@@ -48,7 +48,11 @@ dependencies {
     implementation ("com.google.android.gms:play-services-auth:20.5.0")
     implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
     implementation ("com.google.firebase:firebase-messaging")
+    // Firebase Authentication
+    implementation ("com.google.firebase:firebase-auth-ktx:22.1.1")
 
+    // Google Sign-In SDK
+    implementation ("com.google.android.gms:play-services-auth:20.6.0")
     implementation ("androidx.navigation:navigation-compose:2.4.0")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
     implementation ("com.google.android.gms:play-services-auth:20.5.0")
