@@ -73,7 +73,8 @@ fun DoctorsList(doctorModel: DoctorModel, navController: NavController) {
                     .padding(top = 0.dp), // Explicitly set top padding to zero
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                items(filteredDoctors) { doctor ->
+                items(filteredDoctors) { doctor ->println(doctor.user_id)
+
                     DoctorCard(
                         first_name = doctor.first_name,
                         family_name = doctor.family_name,
@@ -89,7 +90,9 @@ fun DoctorsList(doctorModel: DoctorModel, navController: NavController) {
                                         "&familyName=${doctor.family_name}" +
                                         "&photoUrl=${doctor.photo}" +
                                         "&address=${doctor.address}" +
-                                        "&phone=${doctor.phone}"
+                                        "&phone=${doctor.phone}"+
+                                        "&name=${doctor.name}"+
+                                        "&map=${doctor.map}"
                             )
                         }
                     )

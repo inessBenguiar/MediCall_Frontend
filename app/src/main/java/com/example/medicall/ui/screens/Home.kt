@@ -53,7 +53,7 @@ fun Home(navController: NavController, doctorModel: DoctorModel, userId: String)
 
     Scaffold(
         bottomBar = {
-            Navbar(selectedItem) { newIndex ->
+            Navbar(navController, selectedItem) { newIndex ->
                 selectedItem = newIndex
             }
         }

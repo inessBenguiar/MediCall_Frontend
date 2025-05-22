@@ -1,5 +1,6 @@
 package com.example.medicall.ui.components
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -30,13 +31,17 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -113,6 +118,7 @@ data class UserInfo(
     )
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DoctorProfil(viewModel: DoctorModel, navController: NavController) {
     val context = LocalContext.current
@@ -135,11 +141,36 @@ fun DoctorProfil(viewModel: DoctorModel, navController: NavController) {
             userInfo = userInfo.copy(photoUri = Uri.fromFile(file))
         }
     }
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Professional Information",
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color.White
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = Color(0xFF1976D2)
+                )
+            )
+        }
+    ) {  paddingValues ->
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
+        Spacer(modifier = Modifier.height(70.dp))
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -147,21 +178,6 @@ fun DoctorProfil(viewModel: DoctorModel, navController: NavController) {
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(modifier = Modifier.height(40.dp)) {
-                IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White
-                    )
-                    Text(
-                        text = "Professional Information",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 16.dp, top = 10.dp)
-                    )
-
-                } }
 
             // Photo upload
             Box(

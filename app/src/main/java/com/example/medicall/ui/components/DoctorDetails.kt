@@ -1,6 +1,10 @@
 package com.example.medicall.ui.components
 
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -8,29 +12,39 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.example.medicall.ui.Navigation.Screens
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DoctorDetails(
     navController: NavController,
-    doctorId: Int,
+    doctorId: Int?,
     firstName: String?,
     familyName: String?,
     photoUrl: String?,
     address: String?,
+    name: String?,
+    mapurl: String?,
     phone: String?
 ) {
+    println(firstName)
+    println(photoUrl)
+    println(address)
+    println(phone)
+    println(familyName)
+    println(mapurl)
     Scaffold(
         topBar = {
             TopAppBar(
@@ -98,6 +112,7 @@ fun DoctorDetails(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+
                 // Address
                 Text(
                     text = "📍 ${address ?: "Unknown Address"}",
@@ -107,6 +122,9 @@ fun DoctorDetails(
                     ),
                     color = Color.DarkGray,
                 )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                SimpleMapLink(mapsUrl = mapurl ?: "https://maps.google.com")
 
                 Spacer(modifier = Modifier.height(12.dp))
 
@@ -143,7 +161,7 @@ fun DoctorDetails(
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(90.dp)
+                        .height(50.dp)
                         .clip(RoundedCornerShape(16.dp))
                 ) {
                     Text(
@@ -154,5 +172,50 @@ fun DoctorDetails(
                 }
             }
         }
+    }
+}
+@Composable
+fun SimpleMapLink(mapsUrl: String?) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
+    if (!mapsUrl.isNullOrBlank()) {
+        Text(
+            text = "📍 View Doctor Work Place",
+            color = Color(0xFF4285F4),
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
+                .clickable {
+                    coroutineScope.launch {
+                        try {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(mapsUrl))
+                            // Moved resolveActivity check outside apply
+                            if (intent.resolveActivity(context.packageManager) != null) {
+                                context.startActivity(intent)
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "No map application found",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        } catch (e: Exception) {
+                            Toast.makeText(
+                                context,
+                                "Cannot open map: ${e.localizedMessage}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                }
+                .padding(16.dp)
+        )
+    } else {
+        Text(
+            text = "📍 No location available",
+            color = Color.Gray,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(16.dp)
+        )
     }
 }

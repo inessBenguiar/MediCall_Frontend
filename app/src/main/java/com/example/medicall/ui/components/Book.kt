@@ -1,6 +1,7 @@
 package com.example.medicall.ui.components
 
 import BookAppointmentRequest
+import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,22 +17,29 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialogDefaults.containerColor
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItemDefaults.contentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +48,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -172,6 +181,7 @@ private fun TimeSlotButton(
 
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookScreen(viewModel: AppointmentViewModel, navController: NavController,doctorId: Int) {
     var message by remember { mutableStateOf("") }
@@ -184,114 +194,139 @@ fun BookScreen(viewModel: AppointmentViewModel, navController: NavController,doc
     // Collect available slots and booking status from ViewModel
     val availableSlots by viewModel.availableSlots.collectAsState()
     val bookingStatus by viewModel.bookingStatus.collectAsState()
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-    ) {
-        // Header
-        Row (modifier = Modifier.height(40.dp)) {
-            IconButton(onClick = { navController.popBackStack() }) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Back",
-                tint = Color.White
-            )
-                Text(
-                    text = "Book an Appointment",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 16.dp, top = 10.dp)
-                )
-
-            } }
-
-        // Calendar
-        MultiMonthCalendar(
-            bookedDates = setOf("2025-05-15", "2025-05-11"), // Sample booked dates
-            onDateSelected = { date ->
-                selectedDate = date
-                viewModel.fetchAvailableSlots(doctorId = doctorId, date = date) // Fetch slots for selected date
-            }
-        )
-        selectedDate?.let {
-            Text(
-                text = "Available Slots for $it",
-                style = MaterialTheme.typography.titleMedium
-            )
-        }
-
-        // Display available slots
-        if (availableSlots.isNotEmpty()) {
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp)
-            ) {
-                items(availableSlots.size) { index ->
-                    OutlinedButton(
-                        onClick = {
-                            slotChoosing = availableSlots[index].slot
-                            slotClick = !slotClick
-                        },
-                        modifier = Modifier.padding(4.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = if (slotChoosing == availableSlots[index].slot && slotClick) {
-                                Color(0xFF007AFF) // Selected state
-                            } else {
-                                Color.Transparent // Default state
-                            },
-                            contentColor = if (slotChoosing == availableSlots[index].slot && slotClick) {
-                                Color.White // Selected text color
-                            } else {
-                                Color.Black
-                            }
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Book Appointment",
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
                         )
-                    ) {
-
-                        Text(text = availableSlots[index].time)
-                    }
-                }
-            }
-        } else if (selectedDate != null) {
-            Text(text = "No available slots", color = Color.Red, modifier = Modifier.padding(bottom = 10.dp))
-        }
-
-
-        if (slotChoosing != null) {
-            Button(
-                onClick = {
-                    if (selectedDate != null) {
-                        viewModel.bookAppointment(
-                            BookAppointmentRequest(
-                                doctorId = doctorId,
-                                patientId = readId(context)!!.toInt(),
-                                date = selectedDate!!,
-                                slotPosition = slotChoosing!!,
-                            )
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color.White
                         )
-                        viewModel.fetchAvailableSlots(doctorId = 26, date = selectedDate!!);
                     }
                 },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF007AFF),
-                    contentColor = Color.White
-                ),
-                modifier = Modifier.fillMaxWidth().height(45.dp)
-            ) {
-                Text(text = "Book Appointment")
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = Color(0xFF1976D2)
+                )
+            )
+        }
+    ) {  paddingValues ->
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+        ) {
+            Spacer(modifier = Modifier.height(90.dp))
+            // Calendar
+            MultiMonthCalendar(
+                bookedDates = setOf("2025-05-15", "2025-05-11"), // Sample booked dates
+                onDateSelected = { date ->
+                    selectedDate = date
+                    viewModel.fetchAvailableSlots(
+                        doctorId = doctorId,
+                        date = date
+                    ) // Fetch slots for selected date
+                }
+            )
+            Spacer(modifier = Modifier.height(40.dp))
+            selectedDate?.let {
+                Text(
+                    text = "Available Slots for $it",
+                    style = MaterialTheme.typography.titleMedium
+                )
             }
 
+            // Display available slots
+            if (availableSlots.isNotEmpty()) {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp)
+                ) {
+                    items(availableSlots.size) { index ->
+                        OutlinedButton(
+                            onClick = {
+                                slotChoosing = availableSlots[index].slot
+                                slotClick = !slotClick
+                            },
+                            modifier = Modifier.padding(4.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = if (slotChoosing == availableSlots[index].slot && slotClick) {
+                                    Color(0xFF007AFF) // Selected state
+                                } else {
+                                    Color.Transparent // Default state
+                                },
+                                contentColor = if (slotChoosing == availableSlots[index].slot && slotClick) {
+                                    Color.White // Selected text color
+                                } else {
+                                    Color.Black
+                                }
+                            )
+                        ) {
 
-        }
-        // Show booking status
-        bookingStatus?.let {
-            message = it
-            Toast.makeText(context,message, Toast.LENGTH_SHORT).show()
-            message = ""
+                            Text(text = availableSlots[index].time)
+                        }
+                    }
+                }
+            } else if (selectedDate != null) {
+                Text(
+                    text = "No available slots",
+                    color = Color.Red,
+                    modifier = Modifier.padding(bottom = 10.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(40.dp))
+            if (slotChoosing != null) {
+                Button(
+                    onClick = {
+                        if (selectedDate != null) {
+                            viewModel.bookAppointment(
+                                BookAppointmentRequest(
+                                    doctorId = doctorId,
+                                    patientId = readId(context)!!.toInt(),
+                                    date = selectedDate!!,
+                                    slotPosition = slotChoosing!!,
+                                )
+                            )
+                            viewModel.fetchAvailableSlots(doctorId = 26, date = selectedDate!!);
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF007AFF),
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.fillMaxWidth().height(45.dp)
+                ) {
+                    Text(text = "Book Appointment")
+                }
+                Spacer(modifier = Modifier.height(40.dp))
+
+
+            }
+
+            var lastShownStatus by remember { mutableStateOf<String?>(null) }
+            // Show booking status
+            LaunchedEffect(bookingStatus) {
+                bookingStatus?.takeIf { it != lastShownStatus }?.let { status ->
+                    Toast.makeText(context, status, Toast.LENGTH_SHORT).show()
+                    lastShownStatus = status
+                }
+            }
         }
     }
 }

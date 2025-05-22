@@ -25,8 +25,11 @@ import androidx.navigation.NavController
 import com.example.medicall.service.Appointment
 import com.example.medicall.service.AppointmentService
 import kotlinx.coroutines.withContext
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.format.DateTimeFormatter
+import org.threeten.bp.temporal.TemporalField
+import org.threeten.bp.temporal.WeekFields
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable

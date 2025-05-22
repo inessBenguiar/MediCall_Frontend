@@ -21,8 +21,8 @@ import java.util.BitSet
     ]
 )
 data class Doctor(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val user_id: Long,
+    @PrimaryKey(autoGenerate = true)
+    val user_id: Int,
     val family_name: String,
     val first_name: String,
     val specialty: String,
@@ -32,6 +32,8 @@ data class Doctor(
     val phone: String,
     val experience: Int,
     val address: String,
+    val name: String,
+    val map: String,
    /* val facebook: String? = null,
     val instagram: String? = null,
     val linkedin: String? = null,

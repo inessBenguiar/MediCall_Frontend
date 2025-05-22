@@ -103,14 +103,16 @@ fun AppNavigator() {
             Register(navController)
         }
         composable(
-            route = "${Screens.DoctorDetailScreen.route}?id={id}&firstName={firstName}&familyName={familyName}&photoUrl={photoUrl}&address={address}&phone={phone}",
+            route = "${Screens.DoctorDetailScreen.route}?id={id}&firstName={firstName}&familyName={familyName}&photoUrl={photoUrl}&address={address}&phone={phone}&name={name}&map={map}",
             arguments = listOf(
                 navArgument("id") { type = NavType.StringType; nullable = true },
                 navArgument("firstName") { type = NavType.StringType; nullable = true },
                 navArgument("familyName") { type = NavType.StringType; nullable = true },
                 navArgument("photoUrl") { type = NavType.StringType; nullable = true },
                 navArgument("address") { type = NavType.StringType; nullable = true },
-                navArgument("phone") { type = NavType.StringType; nullable = true }
+                navArgument("phone") { type = NavType.StringType; nullable = true },
+                navArgument("name") { type = NavType.StringType; nullable = true },
+                navArgument("map") { type = NavType.StringType; nullable = true }
             )
         ) {
             DoctorInfo(navController)
@@ -121,6 +123,7 @@ fun AppNavigator() {
         }
         composable("booking/{doctorId}") { backStackEntry ->
             val doctorId = backStackEntry.arguments?.getString("doctorId")
+            println(doctorId!!.toInt())
             Booking(navController, doctorId!!.toInt())
         }
         composable(route = Screens.DoctorProfil.route) {

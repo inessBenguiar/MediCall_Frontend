@@ -221,7 +221,8 @@ fun MultiMonthCalendar(
                     .fillMaxWidth()
                     .height((maxNumberOfRows * 40 + 40).dp) // Fixed height for all months
                     .padding(horizontal = 16.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFE8F4FF))
             ) {
                 MonthCalendar(
                     year = year,
@@ -298,7 +299,7 @@ fun MonthCalendar(
                             color = when {
                                 isPastDate -> Color.LightGray.copy(alpha = 0.5f)
                                 isBooked -> Color.Yellow.copy(alpha = 0.5f)
-                                isWeekend -> Color.LightGray.copy(alpha = 0.3f)
+                                isWeekend -> Color.Cyan.copy(alpha = 0.3f)
                                 else -> Color.Transparent
                             },
                             shape = RoundedCornerShape(8.dp)

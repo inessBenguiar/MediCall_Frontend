@@ -12,13 +12,18 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.medicall.ui.Navigation.Screens
+import com.example.medicall.Navigation.Screens
 import com.example.medicall.ui.preferences.deleteId
 
+data class NavigationItem (
+    val icon: ImageVector,
+   val title: String,
+    val route: String
+    )
 data class NavItemMedecin(val icon: androidx.compose.ui.graphics.vector.ImageVector, val title: String, val route: String)
 
 val navItemsMedecin = listOf(
@@ -50,8 +55,9 @@ fun NavbarDoctor(navController: NavController, selectedIndex: Int, onItemSelecte
             ) {
                 navItemsMedecin.forEachIndexed { index, item ->
                     if (index == 3) { // Profile icon (index 3)
+                        val navItem = NavigationItem(item.icon, item.title, item.route)
                         ProfileMenuWithDropdown(
-                            item = item,
+                            item = navItem,
                             isSelected = index == selectedIndex,
                             navController = navController,
                             onItemClick = { onItemSelected(index) }
@@ -85,9 +91,11 @@ fun NavbarDoctor(navController: NavController, selectedIndex: Int, onItemSelecte
         }
     }
 }
+
+
     @Composable
     fun ProfileMenuWithDropdown(
-        item: NavItemMedecin,
+        item: NavigationItem,
         isSelected: Boolean,
         navController: NavController,
         onItemClick: () -> Unit

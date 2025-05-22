@@ -43,12 +43,6 @@ interface Endpoint {
         @Part photo: MultipartBody.Part? = null
     ): Response<DoctorResponse>
 
-    @Multipart
-    @POST("doctors/{doctorId}/photo")
-    suspend fun uploadDoctorPhoto(
-        @Path("doctorId") doctorId: Long,
-        @Part photo: MultipartBody.Part
-    ): Response<PhotoUploadResponse>
 
     //Endpoints for Booking
     @GET("doctors/{id}/{date}/available-slots")
