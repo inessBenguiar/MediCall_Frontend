@@ -120,8 +120,9 @@ fun AppNavigator() {
         }
 
         composable("appointments") {
-            Appointments(navController = navController)
+            Appointments(navController = navController, patientId = 21)
         }
+
 
 
     }

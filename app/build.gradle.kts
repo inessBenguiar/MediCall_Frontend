@@ -2,9 +2,10 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("com.google.devtools.ksp")
-    kotlin("kapt")
-    // id("com.google.gms.google-services") // Uncomment if you use Firebase
+    id("com.google.devtools.ksp") // For Room and Hilt with KSP
+    id("org.jetbrains.kotlin.kapt") // For Moshi codegen
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0" // Match your Kotlin version
+    // id("com.google.gms.google-services") // Uncomment if using Firebase
 }
 
 android {
@@ -17,6 +18,7 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -55,21 +57,21 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    // Navigation
+    // Navigation Compose
     implementation("androidx.navigation:navigation-compose:2.8.3")
 
     // Google Auth
     implementation("com.google.android.gms:play-services-auth:20.5.0")
 
     // Retrofit + Gson
-    implementation("com.squareup.retrofit2:retrofit:2.6.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.6.0")
-    implementation("com.google.code.gson:gson:2.8.5")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.google.code.gson:gson:2.10.1")
 
-    // Coil (Image Loading)
+    // Coil for image loading
     implementation("io.coil-kt:coil-compose:2.4.0")
 
-    // Moshi (JSON)
+    // Moshi (if used for JSON)
     implementation("com.squareup.moshi:moshi:1.15.0")
     implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
     kapt("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
@@ -78,17 +80,20 @@ dependencies {
     val room_version = "2.6.0"
     implementation("androidx.room:room-runtime:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
-    testImplementation("androidx.room:room-testing:$room_version")
     ksp("androidx.room:room-compiler:$room_version")
+    testImplementation("androidx.room:room-testing:$room_version")
 
-    // Hilt compiler for KSP
+    // Hilt Compiler (if using Hilt)
     ksp("com.google.dagger:hilt-compiler:2.50")
 
-    // QR Code Generation
+    // QR Code
     implementation("com.google.zxing:core:3.5.3")
 
     // Material Icons
-    implementation("androidx.compose.material:material-icons-extended:1.0.5")
+    implementation("androidx.compose.material:material-icons-extended:1.5.0")
+
+    // Kotlin Serialization
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
     // Testing
     testImplementation(libs.junit)

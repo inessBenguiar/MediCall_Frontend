@@ -4,6 +4,7 @@ package com.example.medicall.service
 import BookAppointmentRequest
 import BookResponse
 import TimeSlot
+import com.example.medicall.entity.AppointmentResponse
 import com.example.medicall.entity.ClinicResponse
 import com.example.medicall.entity.Doctor
 import com.example.medicall.entity.DoctorResponse
@@ -74,12 +75,19 @@ interface Endpoint {
         @Body bookAppointmentRequest: BookAppointmentRequest
     ): Response<BookResponse>
 
+    @GET("appointments/patient/{patientId}/confirmed")
+    suspend fun getConfirmedAppointmentsForPatient(
+        @Path("patientId") patientId: Int
+    ): Response<List<AppointmentResponse>>
+
+
+
 
     companion object {
         private var INSTANCE: Endpoint? = null
         fun createInstance(): Endpoint {
             if(INSTANCE ==null) {
-                INSTANCE = Retrofit.Builder().baseUrl("http://localhost:3000/")
+                INSTANCE = Retrofit.Builder().baseUrl("http://172.20.10.4:3000/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build().
                     create(Endpoint::class.java)

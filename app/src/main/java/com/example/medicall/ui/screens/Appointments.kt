@@ -1,6 +1,7 @@
 package com.example.medicall.ui.screens
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,9 +27,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.app.components.Navbar
 import com.example.medicall.R
+import com.example.medicall.entity.AppointmentResponse
+import com.example.medicall.repository.*
+import com.example.medicall.repository.AppointmentRepository
+import com.example.medicall.viewmodel.*
+
+
 
 @Composable
-fun Appointments(navController: NavController) {
+fun Appointments(navController: NavController, patientId: Int ) {
     var selectedItem by remember { mutableStateOf(0) }
     var selectedTab by remember { mutableStateOf(0) }
 
@@ -40,9 +47,7 @@ fun Appointments(navController: NavController) {
     Scaffold(
         bottomBar = {
             if (!isLandscape || !isTablet) {
-                Navbar(selectedItem) { newIndex ->
-                    selectedItem = newIndex
-                }
+                Navbar(selectedItem) { newIndex -> selectedItem = newIndex }
             }
         }
     ) { innerPadding ->
@@ -51,7 +56,6 @@ fun Appointments(navController: NavController) {
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // Header
             Text(
                 text = "My Appointments",
                 style = MaterialTheme.typography.headlineMedium.copy(
@@ -112,7 +116,7 @@ fun Appointments(navController: NavController) {
                     .padding(horizontal = if (isTablet) 24.dp else 16.dp, vertical = 8.dp)
             ) {
                 when (selectedTab) {
-                    0 -> UpcomingAppointments(isLandscape, isTablet, navController)
+                    0 -> UpcomingAppointments(isLandscape, isTablet, navController, patientId)
                     1 -> CompletedAppointments()
                     2 -> CanceledAppointments()
                 }
@@ -121,50 +125,69 @@ fun Appointments(navController: NavController) {
     }
 }
 
-data class AppointmentData(
-    val doctorImage: Painter,
-    val doctorName: String,
-    val specialty: String,
-    val clinic: String,
-    val location: String,
-    val date: String,
-    val time: String
-)
-
 @Composable
 fun UpcomingAppointments(
     isLandscape: Boolean,
     isTablet: Boolean,
-    navController: NavController
+    navController: NavController,
+    patientId: Int,
+    viewModel: AppointmentViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
-    val doctor1 = painterResource(id = R.drawable.doctor1)
-    val doctor2 = painterResource(id = R.drawable.doctor2)
+    LaunchedEffect(patientId) {
+        Log.d("UI", "Patient ID changed: $patientId - loading appointments")
+        viewModel.loadAppointments(patientId)
+    }
 
-    val appointments = listOf(
-        AppointmentData(doctor1, "Dr. James Robinson", "Orthopedic Surgery", "Elite Ortho Clinic", "USA", "May 22, 2023", "10:00 AM"),
-        AppointmentData(doctor2, "Dr. Daniel Lee", "Gastroenterologist", "Digestive Institute", "USA", "June 14, 2023", "15:00 PM"),
-        // Add more appointments as needed
-    )
+    val appointments by viewModel.appointments.collectAsState()
+    val isLoading by viewModel.loading.collectAsState(initial = false)
+    val errorMessage by viewModel.errorMessage.collectAsState()
 
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(appointments) { appointment ->
-            AppointmentCard(
-                doctorImage = appointment.doctorImage,
-                doctorName = appointment.doctorName,
-                specialty = appointment.specialty,
-                clinic = appointment.clinic,
-                location = appointment.location,
-                date = appointment.date,
-                time = appointment.time,
-                onCancel = { /* Handle cancel */ },
-                onReschedule = { /* Handle reschedule */ },
-                onQrCodeClick = {
-                    navController.navigate("qr_code/${appointment.date}-${appointment.time}")
-                }
+    Log.d("UI", "Appointments size: ${appointments.size}, Loading: $isLoading, Error: $errorMessage")
+
+    when {
+        isLoading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        }
+        errorMessage != null -> {
+            Text(
+                text = errorMessage ?: "Unknown error",
+                color = Color.Red,
+                modifier = Modifier.padding(16.dp)
             )
+        }
+        appointments.isEmpty() -> {
+            Text(
+                text = "No upcoming appointments.",
+                modifier = Modifier.padding(16.dp),
+                color = Color.Gray
+            )
+        }
+        else -> {
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(appointments) { appointment ->
+                    AppointmentCard(
+                        doctorImage = painterResource(id = R.drawable.doctor1),
+                        doctorName = appointment.doctorName,
+                        specialty = appointment.specialty,
+                        clinic = appointment.clinic,
+                        location = appointment.location,
+                        date = appointment.date,
+                        time = appointment.time,
+                        onCancel = { /* TODO */ },
+                        onReschedule = { /* TODO */ },
+                        onQrCodeClick = {
+                            navController.navigate("qr_code/${appointment.date}-${appointment.time}")
+                        }
+                    )
+                }
+            }
         }
     }
 }
+
+
 
 @Composable
 fun CompletedAppointments() {
@@ -198,7 +221,6 @@ fun AppointmentCard(
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            // Date & QR Code Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -220,7 +242,6 @@ fun AppointmentCard(
                 modifier = Modifier.padding(vertical = 8.dp)
             )
 
-            // Doctor Info
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
                     painter = doctorImage,
@@ -252,7 +273,6 @@ fun AppointmentCard(
                 modifier = Modifier.padding(vertical = 8.dp)
             )
 
-            // Action Buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -285,3 +305,4 @@ fun AppointmentCard(
         }
     }
 }
+
