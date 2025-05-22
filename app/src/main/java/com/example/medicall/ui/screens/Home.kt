@@ -55,7 +55,23 @@ fun Home(navController: NavController, doctorModel: DoctorModel, userId: String)
         bottomBar = {
             Navbar(selectedItem) { newIndex ->
                 selectedItem = newIndex
+                when (newIndex) {
+                    0 -> {
+                        // Home screen (you’re already here, maybe no navigation needed)
+                    }
+                    1 -> {
+                        // Favoris - implement this if you have such a screen
+                    }
+                    2 -> {
+                        // This is the "Calendrier" tab — navigate to confirmed appointments
+                        navController.navigate("confirmed/$userId")
+                    }
+                    3 -> {
+                        // Profile - implement if you have a profile screen
+                    }
+                }
             }
+
         }
     ) { innerPadding ->
         Column(

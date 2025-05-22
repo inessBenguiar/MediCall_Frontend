@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -21,12 +22,14 @@ import com.example.medicall.ui.components.AddPrescriptionForm
 import com.example.medicall.ui.components.AppointmentDetails
 import com.example.medicall.ui.preferences.readId
 import com.example.medicall.ui.screens.Booking
+import com.example.medicall.ui.screens.ConfirmedAppointmentsScreen
 import com.example.medicall.ui.screens.DoctorHome
 import com.example.medicall.ui.screens.DoctorInfo
 import com.example.medicall.ui.screens.Home
 import com.example.medicall.ui.screens.Login
 import com.example.medicall.ui.screens.Register
 import com.example.medicall.ui.theme.MedicallTheme
+import com.example.medicall.viewmodel.AppointmentViewModel
 import com.example.medicall.viewmodel.DoctorModel
 
 class MainActivity : ComponentActivity() {
@@ -52,6 +55,11 @@ fun AppNavigator() {
     val context = LocalContext.current
     val start:String
     val userId = readId(context)
+
+    val appointmentViewModel = remember {
+        AppointmentViewModel(RepositoryHolder.AppointmentRepository)
+    }
+
     //Is user still connected ?
     if ( userId != null){
         start = "home/${userId}"
@@ -106,5 +114,22 @@ fun AppNavigator() {
         composable(route = com.example.medicall.ui.Navigation.Screens.Booking.route) {
             Booking()
         }
+
+        composable(
+            route = "confirmed/{patientId}",
+            arguments = listOf(navArgument("patientId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val pid = backStackEntry.arguments?.getInt("patientId") ?: -1
+            if (pid >= 0) {
+                ConfirmedAppointmentsScreen(
+                    patientId = pid,
+                    viewModel = appointmentViewModel
+                )
+            }
+        }
+
+
+
+
     }
 }

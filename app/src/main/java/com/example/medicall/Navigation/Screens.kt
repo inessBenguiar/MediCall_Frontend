@@ -7,5 +7,7 @@ sealed class Screens(val route: String) {
     object MainScreen : Screens("login")
     object Add: Screens("prescription")
     object DoctorHome: Screens("doctorhome")
+    object ConfirmedAppointmentsScreen : Screens("confirmed/{patientId}")
+
 
 }

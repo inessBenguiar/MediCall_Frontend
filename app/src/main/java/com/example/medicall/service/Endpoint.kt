@@ -5,6 +5,7 @@ import BookAppointmentRequest
 import BookResponse
 import TimeSlot
 import com.example.medicall.entity.ClinicResponse
+import com.example.medicall.entity.ConfirmedAppointment
 import com.example.medicall.entity.Doctor
 import com.example.medicall.entity.DoctorResponse
 import com.example.medicall.ui.components.UserInfo
@@ -18,6 +19,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
+
 
 interface Endpoint {
 
@@ -75,11 +77,18 @@ interface Endpoint {
     ): Response<BookResponse>
 
 
+
+
+        @GET("appointments/patient/{patientId}/confirmed")
+        suspend fun getConfirmedAppointments(@Path("patientId") patientId: Int): List<ConfirmedAppointment>
+
+
+
     companion object {
         private var INSTANCE: Endpoint? = null
         fun createInstance(): Endpoint {
             if(INSTANCE ==null) {
-                INSTANCE = Retrofit.Builder().baseUrl("http://localhost:3000/")
+                INSTANCE = Retrofit.Builder().baseUrl("http://172.20.10.4:3000/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build().
                     create(Endpoint::class.java)
